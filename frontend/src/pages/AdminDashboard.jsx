@@ -59,9 +59,19 @@ const AdminDashboard = () => {
     try {
       const data = new FormData()
 
+      // Al editar, enviar TODOS los campos (incluso los vacíos)
+      // Al crear nuevo, solo enviar campos con valor
       Object.keys(formData).forEach(key => {
-        if (formData[key]) {
-          data.append(key, formData[key])
+        const value = formData[key]
+
+        if (editingVehicle) {
+          // Siempre enviar el campo cuando editamos
+          data.append(key, value !== null && value !== undefined ? value : '')
+        } else {
+          // Solo enviar campos con valor cuando creamos
+          if (value) {
+            data.append(key, value)
+          }
         }
       })
 

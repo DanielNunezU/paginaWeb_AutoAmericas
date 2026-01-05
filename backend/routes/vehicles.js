@@ -229,12 +229,12 @@ router.put('/:id', authMiddleware, upload.array('images', 10), (req, res) => {
           model || vehicle.model,
           year || vehicle.year,
           price || vehicle.price,
-          mileage !== undefined ? mileage : vehicle.mileage,
+          mileage || vehicle.mileage,
           fuel_type || vehicle.fuel_type,
           transmission || vehicle.transmission,
           color || vehicle.color,
-          description !== undefined ? description : vehicle.description,
-          features !== undefined ? features : vehicle.features,
+          description || vehicle.description,
+          features || vehicle.features,
           status || vehicle.status,
           id
         ];
