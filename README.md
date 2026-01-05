@@ -27,7 +27,7 @@ Sistema completo para compraventa de vehículos con panel de administración, de
 ### Backend
 - **Node.js** - Runtime de JavaScript
 - **Express** - Framework web
-- **SQLite** (better-sqlite3) - Base de datos
+- **SQLite** (sqlite3) - Base de datos
 - **JWT** - Autenticación
 - **Multer** - Manejo de archivos
 - **bcryptjs** - Encriptación de contraseñas
