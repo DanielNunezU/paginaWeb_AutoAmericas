@@ -69,15 +69,29 @@ router.get('/', (req, res) => {
   try {
     const { status = 'available' } = req.query;
 
-    const query = `
-      SELECT v.*,
-             (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id AND is_primary = 1 LIMIT 1) as primary_image
-      FROM vehicles v
-      WHERE v.status = ?
-      ORDER BY v.created_at DESC
-    `;
+    // Si status es 'all', traer todos los vehículos sin filtrar
+    let query, params;
 
-    db.all(query, [status], (err, vehicles) => {
+    if (status === 'all') {
+      query = `
+        SELECT v.*,
+               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id AND is_primary = 1 LIMIT 1) as primary_image
+        FROM vehicles v
+        ORDER BY v.created_at DESC
+      `;
+      params = [];
+    } else {
+      query = `
+        SELECT v.*,
+               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id AND is_primary = 1 LIMIT 1) as primary_image
+        FROM vehicles v
+        WHERE v.status = ?
+        ORDER BY v.created_at DESC
+      `;
+      params = [status];
+    }
+
+    db.all(query, params, (err, vehicles) => {
       if (err) {
         console.error('Error al obtener vehículos:', err);
         return res.status(500).json({ message: 'Error del servidor' });

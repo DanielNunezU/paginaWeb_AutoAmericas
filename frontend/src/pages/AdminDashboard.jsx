@@ -33,7 +33,8 @@ const AdminDashboard = () => {
   const fetchVehicles = async () => {
     try {
       setLoading(true)
-      const response = await axios.get('/api/vehicles')
+      // En admin, traer TODOS los vehículos sin importar el estado
+      const response = await axios.get('/api/vehicles?status=all')
       setVehicles(response.data)
     } catch (error) {
       console.error('Error al obtener vehículos:', error)
