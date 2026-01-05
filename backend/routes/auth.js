@@ -13,32 +13,37 @@ router.post('/login', (req, res) => {
       return res.status(400).json({ message: 'Usuario y contraseña requeridos' });
     }
 
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-
-    if (!user) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-
-    const isValidPassword = bcrypt.compareSync(password, user.password);
-
-    if (!isValidPassword) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-
-    const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      message: 'Login exitoso',
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role
+    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+      if (err) {
+        console.error('Error en login:', err);
+        return res.status(500).json({ message: 'Error del servidor' });
       }
+
+      if (!user) {
+        return res.status(401).json({ message: 'Credenciales inválidas' });
+      }
+
+      const isValidPassword = bcrypt.compareSync(password, user.password);
+
+      if (!isValidPassword) {
+        return res.status(401).json({ message: 'Credenciales inválidas' });
+      }
+
+      const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      res.json({
+        message: 'Login exitoso',
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role
+        }
+      });
     });
   } catch (error) {
     console.error('Error en login:', error);

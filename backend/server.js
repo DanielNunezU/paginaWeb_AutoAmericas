@@ -18,22 +18,33 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Crear usuario admin por defecto si no existe
 const createDefaultAdmin = () => {
-  const adminExists = db.prepare('SELECT * FROM users WHERE username = ?').get(process.env.ADMIN_USERNAME || 'admin');
+  db.get('SELECT * FROM users WHERE username = ?', [process.env.ADMIN_USERNAME || 'admin'], (err, adminExists) => {
+    if (err) {
+      console.error('Error al verificar admin:', err);
+      return;
+    }
 
-  if (!adminExists) {
-    const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin123', 10);
-    db.prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)').run(
-      process.env.ADMIN_USERNAME || 'admin',
-      hashedPassword,
-      'admin'
-    );
-    console.log('✅ Usuario administrador creado');
-    console.log(`   Usuario: ${process.env.ADMIN_USERNAME || 'admin'}`);
-    console.log(`   Contraseña: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
-  }
+    if (!adminExists) {
+      const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin123', 10);
+      db.run(
+        'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+        [process.env.ADMIN_USERNAME || 'admin', hashedPassword, 'admin'],
+        (err) => {
+          if (err) {
+            console.error('Error al crear admin:', err);
+          } else {
+            console.log('✅ Usuario administrador creado');
+            console.log(`   Usuario: ${process.env.ADMIN_USERNAME || 'admin'}`);
+            console.log(`   Contraseña: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
+          }
+        }
+      );
+    }
+  });
 };
 
-createDefaultAdmin();
+// Esperar a que las tablas se creen antes de crear el admin
+setTimeout(createDefaultAdmin, 1000);
 
 // Rutas
 app.use('/api/auth', require('./routes/auth'));
