@@ -23,7 +23,7 @@ const Navbar = () => {
               Inicio
             </Link>
 
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <>
                 <Link to="/admin/dashboard" className="hover:text-blue-100 transition-colors font-medium">
                   Panel Admin
@@ -38,13 +38,6 @@ const Navbar = () => {
                   </button>
                 </div>
               </>
-            ) : (
-              <Link
-                to="/admin/login"
-                className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors font-medium"
-              >
-                Acceso Admin
-              </Link>
             )}
           </div>
         </div>
