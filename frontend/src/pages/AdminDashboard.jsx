@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import axios from '../utils/axios'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const AdminDashboard = () => {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
@@ -53,7 +57,6 @@ const AdminDashboard = () => {
     setLoading(true)
 
     try {
-      const token = localStorage.getItem('token')
       const data = new FormData()
 
       Object.keys(formData).forEach(key => {
@@ -67,20 +70,10 @@ const AdminDashboard = () => {
       })
 
       if (editingVehicle) {
-        await axios.put(`/api/vehicles/${editingVehicle.id}`, data, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        })
+        await axios.put(`/api/vehicles/${editingVehicle.id}`, data)
         alert('Vehículo actualizado exitosamente')
       } else {
-        await axios.post('/api/vehicles', data, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        })
+        await axios.post('/api/vehicles', data)
         alert('Vehículo creado exitosamente')
       }
 
@@ -88,7 +81,14 @@ const AdminDashboard = () => {
       fetchVehicles()
     } catch (error) {
       console.error('Error al guardar vehículo:', error)
-      alert(error.response?.data?.message || 'Error al guardar vehículo')
+
+      if (error.response?.status === 401) {
+        alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.')
+        logout()
+        navigate('/admin')
+      } else {
+        alert(error.response?.data?.message || 'Error al guardar vehículo')
+      }
     } finally {
       setLoading(false)
     }
@@ -117,15 +117,19 @@ const AdminDashboard = () => {
     if (!confirm('¿Estás seguro de eliminar este vehículo?')) return
 
     try {
-      const token = localStorage.getItem('token')
-      await axios.delete(`/api/vehicles/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      await axios.delete(`/api/vehicles/${id}`)
       alert('Vehículo eliminado exitosamente')
       fetchVehicles()
     } catch (error) {
       console.error('Error al eliminar vehículo:', error)
-      alert('Error al eliminar vehículo')
+
+      if (error.response?.status === 401) {
+        alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.')
+        logout()
+        navigate('/admin')
+      } else {
+        alert('Error al eliminar vehículo')
+      }
     }
   }
 
