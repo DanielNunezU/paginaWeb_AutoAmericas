@@ -11,6 +11,7 @@ const Navbar = () => {
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false)
   const [brands, setBrands] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('carro')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const handleLogout = () => {
     logout()
@@ -52,17 +53,64 @@ const Navbar = () => {
     navigate('/')
     setShowBrandsMenu(false)
     setShowCategoriesMenu(false)
+    setSearchQuery('')
+  }
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/?busqueda=${encodeURIComponent(searchQuery.trim())}`)
+    } else {
+      navigate('/')
+    }
   }
 
   return (
     <nav className="bg-blue-600 text-white shadow-lg">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <Link to="/" className="text-2xl font-bold hover:text-blue-100 transition-colors">
+        {/* Primera fila: Logo, Búsqueda y Autenticación */}
+        <div className="flex justify-between items-center py-4 border-b border-blue-500">
+          <Link to="/" className="text-2xl font-bold hover:text-blue-100 transition-colors flex-shrink-0">
             🚗 AutoAmericas
           </Link>
 
-          <div className="flex items-center gap-6">
+          {/* Barra de Búsqueda */}
+          <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar vehículos por marca, modelo, año..."
+                className="w-full px-4 py-2 pr-12 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          {/* Autenticación */}
+          {isAuthenticated && (
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <span className="text-sm">Hola, {user?.username}</span>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors font-medium"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Segunda fila: Navegación */}
+        <div className="flex items-center gap-6 py-3">
             <Link to="/" className="hover:text-blue-100 transition-colors font-medium">
               Inicio
             </Link>
@@ -157,23 +205,11 @@ const Navbar = () => {
             </Link>
 
             {isAuthenticated && (
-              <>
-                <Link to="/admin/dashboard" className="hover:text-blue-100 transition-colors font-medium">
-                  Panel Admin
-                </Link>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm">Hola, {user?.username}</span>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors font-medium"
-                  >
-                    Cerrar Sesión
-                  </button>
-                </div>
-              </>
+              <Link to="/admin/dashboard" className="hover:text-blue-100 transition-colors font-medium">
+                Panel Admin
+              </Link>
             )}
           </div>
-        </div>
       </div>
     </nav>
   )

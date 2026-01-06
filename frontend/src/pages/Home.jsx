@@ -16,6 +16,7 @@ const Home = () => {
   useEffect(() => {
     const marca = searchParams.get('marca')
     const categoria = searchParams.get('categoria')
+    const busqueda = searchParams.get('busqueda')
 
     let filtered = vehicles
 
@@ -31,6 +32,21 @@ const Home = () => {
       filtered = filtered.filter(v =>
         v.brand.toLowerCase() === marca.toLowerCase()
       )
+    }
+
+    // Filtrar por búsqueda si existe
+    if (busqueda) {
+      const searchLower = busqueda.toLowerCase()
+      filtered = filtered.filter(v => {
+        return (
+          (v.title && v.title.toLowerCase().includes(searchLower)) ||
+          (v.brand && v.brand.toLowerCase().includes(searchLower)) ||
+          (v.model && v.model.toLowerCase().includes(searchLower)) ||
+          (v.year && v.year.toString().includes(searchLower)) ||
+          (v.color && v.color.toLowerCase().includes(searchLower)) ||
+          (v.description && v.description.toLowerCase().includes(searchLower))
+        )
+      })
     }
 
     setFilteredVehicles(filtered)
@@ -78,6 +94,7 @@ const Home = () => {
 
   const marca = searchParams.get('marca')
   const categoria = searchParams.get('categoria')
+  const busqueda = searchParams.get('busqueda')
   const displayVehicles = filteredVehicles
 
   const getCategoryLabel = (cat) => {
@@ -88,6 +105,9 @@ const Home = () => {
   }
 
   const getPageTitle = () => {
+    if (busqueda) {
+      return `Resultados de búsqueda: "${busqueda}"`
+    }
     if (marca && categoria) {
       return `${marca} - ${getCategoryLabel(categoria)}`
     }
@@ -100,7 +120,7 @@ const Home = () => {
     return 'Vehículos Disponibles'
   }
 
-  const hasFilter = marca || categoria
+  const hasFilter = marca || categoria || busqueda
 
   return (
     <div className="bg-gray-50 min-h-screen">
