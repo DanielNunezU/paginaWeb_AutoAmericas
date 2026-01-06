@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useState, useEffect } from 'react'
+import { VEHICLE_BRANDS } from '../constants/vehicles'
 
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth()
@@ -17,19 +18,6 @@ const Navbar = () => {
   useEffect(() => {
     setShowBrandsMenu(false)
   }, [location])
-
-  const brands = [
-    'Toyota',
-    'Chevrolet',
-    'Mazda',
-    'Nissan',
-    'Hyundai',
-    'Kia',
-    'Ford',
-    'Honda',
-    'Renault',
-    'Volkswagen'
-  ]
 
   const handleBrandClick = (brand) => {
     navigate(`/?marca=${brand}`)
@@ -75,7 +63,7 @@ const Navbar = () => {
                     Todos los vehículos
                   </button>
                   <div className="border-t border-gray-200 my-2"></div>
-                  {brands.map((brand) => (
+                  {VEHICLE_BRANDS.map((brand) => (
                     <button
                       key={brand}
                       onClick={() => handleBrandClick(brand)}

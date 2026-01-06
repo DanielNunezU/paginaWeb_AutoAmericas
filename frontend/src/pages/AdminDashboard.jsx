@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from '../utils/axios'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { VEHICLE_BRANDS, FUEL_TYPES, TRANSMISSION_TYPES } from '../constants/vehicles'
 
 const AdminDashboard = () => {
   const { logout } = useAuth()
@@ -204,15 +205,20 @@ const AdminDashboard = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Marca *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="brand"
                     value={formData.brand}
                     onChange={handleInputChange}
                     required
                     className="input-field"
-                    placeholder="Ej: Toyota"
-                  />
+                  >
+                    <option value="">Seleccionar marca</option>
+                    {VEHICLE_BRANDS.map((brand) => (
+                      <option key={brand} value={brand}>
+                        {brand}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -288,11 +294,11 @@ const AdminDashboard = () => {
                     className="input-field"
                   >
                     <option value="">Seleccionar</option>
-                    <option value="Gasolina">Gasolina</option>
-                    <option value="Diésel">Diésel</option>
-                    <option value="Eléctrico">Eléctrico</option>
-                    <option value="Híbrido">Híbrido</option>
-                    <option value="Gas">Gas</option>
+                    {FUEL_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -307,9 +313,11 @@ const AdminDashboard = () => {
                     className="input-field"
                   >
                     <option value="">Seleccionar</option>
-                    <option value="Manual">Manual</option>
-                    <option value="Automática">Automática</option>
-                    <option value="Semiautomática">Semiautomática</option>
+                    {TRANSMISSION_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
