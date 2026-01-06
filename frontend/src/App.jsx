@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import VehicleDetail from './pages/VehicleDetail'
+import Contact from './pages/Contact'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
 import PrivateRoute from './components/PrivateRoute'
@@ -17,6 +18,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/vehiculo/:slug" element={<VehicleDetail />} />
+              <Route path="/contacto" element={<Contact />} />
               <Route path="/admin" element={<AdminLogin />} />
               <Route
                 path="/admin/dashboard"

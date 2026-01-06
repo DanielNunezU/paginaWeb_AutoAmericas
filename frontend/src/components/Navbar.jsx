@@ -1,13 +1,44 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useState, useEffect } from 'react'
 
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [showBrandsMenu, setShowBrandsMenu] = useState(false)
 
   const handleLogout = () => {
     logout()
     navigate('/')
+  }
+
+  // Cerrar menú al cambiar de página
+  useEffect(() => {
+    setShowBrandsMenu(false)
+  }, [location])
+
+  const brands = [
+    'Toyota',
+    'Chevrolet',
+    'Mazda',
+    'Nissan',
+    'Hyundai',
+    'Kia',
+    'Ford',
+    'Honda',
+    'Renault',
+    'Volkswagen'
+  ]
+
+  const handleBrandClick = (brand) => {
+    navigate(`/?marca=${brand}`)
+    setShowBrandsMenu(false)
+  }
+
+  const handleAllVehicles = () => {
+    navigate('/')
+    setShowBrandsMenu(false)
   }
 
   return (
@@ -21,6 +52,44 @@ const Navbar = () => {
           <div className="flex items-center gap-6">
             <Link to="/" className="hover:text-blue-100 transition-colors font-medium">
               Inicio
+            </Link>
+
+            {/* Dropdown de Marcas */}
+            <div className="relative">
+              <button
+                onClick={() => setShowBrandsMenu(!showBrandsMenu)}
+                className="hover:text-blue-100 transition-colors font-medium flex items-center gap-1"
+              >
+                Marcas
+                <svg className={`w-4 h-4 transition-transform ${showBrandsMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {showBrandsMenu && (
+                <div className="absolute top-full mt-2 right-0 bg-white text-gray-800 rounded-lg shadow-xl py-2 w-48 z-50">
+                  <button
+                    onClick={handleAllVehicles}
+                    className="w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors font-medium"
+                  >
+                    Todos los vehículos
+                  </button>
+                  <div className="border-t border-gray-200 my-2"></div>
+                  {brands.map((brand) => (
+                    <button
+                      key={brand}
+                      onClick={() => handleBrandClick(brand)}
+                      className="w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors"
+                    >
+                      {brand}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Link to="/contacto" className="hover:text-blue-100 transition-colors font-medium">
+              Contáctenos
             </Link>
 
             {isAuthenticated && (

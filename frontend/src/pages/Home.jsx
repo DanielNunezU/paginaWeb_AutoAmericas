@@ -1,15 +1,29 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 
 const Home = () => {
   const [vehicles, setVehicles] = useState([])
+  const [filteredVehicles, setFilteredVehicles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     fetchVehicles()
   }, [])
+
+  useEffect(() => {
+    const marca = searchParams.get('marca')
+    if (marca) {
+      const filtered = vehicles.filter(v =>
+        v.brand.toLowerCase() === marca.toLowerCase()
+      )
+      setFilteredVehicles(filtered)
+    } else {
+      setFilteredVehicles(vehicles)
+    }
+  }, [searchParams, vehicles])
 
   const fetchVehicles = async () => {
     try {
@@ -51,6 +65,9 @@ const Home = () => {
     )
   }
 
+  const marca = searchParams.get('marca')
+  const displayVehicles = filteredVehicles
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
@@ -65,18 +82,41 @@ const Home = () => {
 
       {/* Vehículos disponibles */}
       <div className="container mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold mb-8 text-gray-800">Vehículos Disponibles</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">
+            {marca ? `Vehículos ${marca}` : 'Vehículos Disponibles'}
+          </h2>
+          {marca && (
+            <Link
+              to="/"
+              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Limpiar filtro
+            </Link>
+          )}
+        </div>
 
-        {vehicles.length === 0 ? (
+        {displayVehicles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🚗</div>
             <p className="text-xl text-gray-600">
-              No hay vehículos disponibles en este momento
+              {marca
+                ? `No hay vehículos ${marca} disponibles en este momento`
+                : 'No hay vehículos disponibles en este momento'
+              }
             </p>
+            {marca && (
+              <Link to="/" className="text-blue-600 hover:underline mt-4 inline-block">
+                Ver todos los vehículos
+              </Link>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {vehicles.map((vehicle) => (
+            {displayVehicles.map((vehicle) => (
               <Link
                 key={vehicle.id}
                 to={`/vehiculo/${vehicle.slug}`}
