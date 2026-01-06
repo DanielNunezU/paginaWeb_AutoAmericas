@@ -49,6 +49,7 @@ setTimeout(createDefaultAdmin, 1000);
 // Rutas
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vehicles', require('./routes/vehicles'));
+app.use('/api/brands', require('./routes/brands'));
 
 // Ruta de bienvenida
 app.get('/', (req, res) => {

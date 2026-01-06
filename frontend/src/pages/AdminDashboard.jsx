@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from '../utils/axios'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { VEHICLE_BRANDS, FUEL_TYPES, TRANSMISSION_TYPES } from '../constants/vehicles'
+import { FUEL_TYPES, TRANSMISSION_TYPES } from '../constants/vehicles'
 
 const AdminDashboard = () => {
   const { logout } = useAuth()
@@ -23,13 +23,24 @@ const AdminDashboard = () => {
     color: '',
     description: '',
     features: '',
+    category: 'carro',
     status: 'available'
   })
   const [images, setImages] = useState([])
+  const [brands, setBrands] = useState([])
+  const [allBrands, setAllBrands] = useState([])
+  const [showBrandManager, setShowBrandManager] = useState(false)
+  const [newBrandName, setNewBrandName] = useState('')
+  const [newBrandCategory, setNewBrandCategory] = useState('carro')
 
   useEffect(() => {
     fetchVehicles()
+    fetchAllBrands()
   }, [])
+
+  useEffect(() => {
+    fetchBrandsByCategory(formData.category)
+  }, [formData.category])
 
   const fetchVehicles = async () => {
     try {
@@ -42,6 +53,24 @@ const AdminDashboard = () => {
       alert('Error al cargar vehículos')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchAllBrands = async () => {
+    try {
+      const response = await axios.get('/api/brands')
+      setAllBrands(response.data)
+    } catch (error) {
+      console.error('Error al obtener marcas:', error)
+    }
+  }
+
+  const fetchBrandsByCategory = async (category) => {
+    try {
+      const response = await axios.get(`/api/brands?category=${category}`)
+      setBrands(response.data)
+    } catch (error) {
+      console.error('Error al obtener marcas:', error)
     }
   }
 
@@ -120,6 +149,7 @@ const AdminDashboard = () => {
       color: vehicle.color || '',
       description: vehicle.description || '',
       features: vehicle.features || '',
+      category: vehicle.category || 'carro',
       status: vehicle.status
     })
     setShowForm(true)
@@ -158,6 +188,7 @@ const AdminDashboard = () => {
       color: '',
       description: '',
       features: '',
+      category: 'carro',
       status: 'available'
     })
     setImages([])
@@ -165,18 +196,139 @@ const AdminDashboard = () => {
     setShowForm(false)
   }
 
+  const handleAddBrand = async (e) => {
+    e.preventDefault()
+    if (!newBrandName.trim()) return
+
+    try {
+      await axios.post('/api/brands', {
+        name: newBrandName.trim(),
+        category: newBrandCategory
+      })
+      alert('Marca agregada exitosamente')
+      setNewBrandName('')
+      fetchAllBrands()
+      fetchBrandsByCategory(formData.category)
+    } catch (error) {
+      console.error('Error al agregar marca:', error)
+      alert(error.response?.data?.message || 'Error al agregar marca')
+    }
+  }
+
+  const handleDeleteBrand = async (brandId) => {
+    if (!confirm('¿Estás seguro de eliminar esta marca?')) return
+
+    try {
+      await axios.delete(`/api/brands/${brandId}`)
+      alert('Marca eliminada exitosamente')
+      fetchAllBrands()
+      fetchBrandsByCategory(formData.category)
+    } catch (error) {
+      console.error('Error al eliminar marca:', error)
+      alert('Error al eliminar marca')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Panel de Administración</h1>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="btn-primary"
-          >
-            {showForm ? 'Cancelar' : '+ Nuevo Vehículo'}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowBrandManager(!showBrandManager)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              {showBrandManager ? 'Cerrar' : 'Gestionar Marcas'}
+            </button>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="btn-primary"
+            >
+              {showForm ? 'Cancelar' : '+ Nuevo Vehículo'}
+            </button>
+          </div>
         </div>
+
+        {showBrandManager && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Gestionar Marcas</h2>
+
+            {/* Formulario para agregar marca */}
+            <form onSubmit={handleAddBrand} className="mb-8 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Agregar Nueva Marca</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de la Marca
+                  </label>
+                  <input
+                    type="text"
+                    value={newBrandName}
+                    onChange={(e) => setNewBrandName(e.target.value)}
+                    required
+                    className="input-field"
+                    placeholder="Ej: Tesla"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Categoría
+                  </label>
+                  <select
+                    value={newBrandCategory}
+                    onChange={(e) => setNewBrandCategory(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="carro">Carros</option>
+                    <option value="moto">Motos</option>
+                    <option value="carga">Carga Pesada</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <button type="submit" className="btn-primary w-full">
+                    Agregar Marca
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Lista de marcas por categoría */}
+            <div className="space-y-6">
+              {['carro', 'moto', 'carga'].map((category) => {
+                const categoryBrands = allBrands.filter(b => b.category === category)
+                const categoryLabel = category === 'carro' ? 'Carros' : category === 'moto' ? 'Motos' : 'Carga Pesada'
+
+                return (
+                  <div key={category}>
+                    <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                      {categoryLabel} ({categoryBrands.length})
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {categoryBrands.map((brand) => (
+                        <div
+                          key={brand.id}
+                          className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg"
+                        >
+                          <span className="text-sm font-medium text-gray-700">{brand.name}</span>
+                          <button
+                            onClick={() => handleDeleteBrand(brand.id)}
+                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      {categoryBrands.length === 0 && (
+                        <p className="text-gray-500 text-sm col-span-full">No hay marcas en esta categoría</p>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {showForm && (
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
@@ -203,6 +355,23 @@ const AdminDashboard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Categoría *
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                    className="input-field"
+                  >
+                    <option value="carro">Carro</option>
+                    <option value="moto">Moto</option>
+                    <option value="carga">Carga Pesada</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Marca *
                   </label>
                   <select
@@ -213,9 +382,9 @@ const AdminDashboard = () => {
                     className="input-field"
                   >
                     <option value="">Seleccionar marca</option>
-                    {VEHICLE_BRANDS.map((brand) => (
-                      <option key={brand} value={brand}>
-                        {brand}
+                    {brands.map((brand) => (
+                      <option key={brand.id} value={brand.name}>
+                        {brand.name}
                       </option>
                     ))}
                   </select>

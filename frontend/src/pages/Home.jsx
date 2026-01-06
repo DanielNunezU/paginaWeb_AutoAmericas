@@ -15,14 +15,25 @@ const Home = () => {
 
   useEffect(() => {
     const marca = searchParams.get('marca')
+    const categoria = searchParams.get('categoria')
+
+    let filtered = vehicles
+
+    // Filtrar por categoría si existe
+    if (categoria) {
+      filtered = filtered.filter(v =>
+        v.category && v.category.toLowerCase() === categoria.toLowerCase()
+      )
+    }
+
+    // Filtrar por marca si existe
     if (marca) {
-      const filtered = vehicles.filter(v =>
+      filtered = filtered.filter(v =>
         v.brand.toLowerCase() === marca.toLowerCase()
       )
-      setFilteredVehicles(filtered)
-    } else {
-      setFilteredVehicles(vehicles)
     }
+
+    setFilteredVehicles(filtered)
   }, [searchParams, vehicles])
 
   const fetchVehicles = async () => {
@@ -66,7 +77,30 @@ const Home = () => {
   }
 
   const marca = searchParams.get('marca')
+  const categoria = searchParams.get('categoria')
   const displayVehicles = filteredVehicles
+
+  const getCategoryLabel = (cat) => {
+    if (cat === 'carro') return 'Carros'
+    if (cat === 'moto') return 'Motos'
+    if (cat === 'carga') return 'Carga Pesada'
+    return ''
+  }
+
+  const getPageTitle = () => {
+    if (marca && categoria) {
+      return `${marca} - ${getCategoryLabel(categoria)}`
+    }
+    if (marca) {
+      return `Vehículos ${marca}`
+    }
+    if (categoria) {
+      return getCategoryLabel(categoria)
+    }
+    return 'Vehículos Disponibles'
+  }
+
+  const hasFilter = marca || categoria
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -84,9 +118,9 @@ const Home = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800">
-            {marca ? `Vehículos ${marca}` : 'Vehículos Disponibles'}
+            {getPageTitle()}
           </h2>
-          {marca && (
+          {hasFilter && (
             <Link
               to="/"
               className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
@@ -94,7 +128,7 @@ const Home = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-              Limpiar filtro
+              Limpiar filtros
             </Link>
           )}
         </div>
@@ -103,12 +137,12 @@ const Home = () => {
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🚗</div>
             <p className="text-xl text-gray-600">
-              {marca
-                ? `No hay vehículos ${marca} disponibles en este momento`
+              {hasFilter
+                ? `No hay vehículos disponibles con los filtros seleccionados`
                 : 'No hay vehículos disponibles en este momento'
               }
             </p>
-            {marca && (
+            {hasFilter && (
               <Link to="/" className="text-blue-600 hover:underline mt-4 inline-block">
                 Ver todos los vehículos
               </Link>

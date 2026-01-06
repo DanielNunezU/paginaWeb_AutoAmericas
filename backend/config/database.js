@@ -46,6 +46,7 @@ const createTables = () => {
       color TEXT,
       description TEXT,
       features TEXT,
+      category TEXT DEFAULT 'carro',
       status TEXT DEFAULT 'available',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -53,6 +54,13 @@ const createTables = () => {
   `, (err) => {
     if (err) {
       console.error('Error al crear tabla vehicles:', err);
+    } else {
+      // Agregar columna category si no existe (para DBs existentes)
+      db.run(`ALTER TABLE vehicles ADD COLUMN category TEXT DEFAULT 'carro'`, (err) => {
+        if (err && !err.message.includes('duplicate column')) {
+          console.error('Error al agregar columna category:', err);
+        }
+      });
     }
   });
 
@@ -71,6 +79,54 @@ const createTables = () => {
       console.error('Error al crear tabla vehicle_images:', err);
     } else {
       console.log('✅ Tablas de base de datos creadas correctamente');
+    }
+  });
+
+  // Tabla de marcas personalizadas
+  db.run(`
+    CREATE TABLE IF NOT EXISTS brands (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      category TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `, (err) => {
+    if (err) {
+      console.error('Error al crear tabla brands:', err);
+    } else {
+      // Inicializar marcas por defecto
+      initializeDefaultBrands();
+    }
+  });
+};
+
+// Inicializar marcas por defecto
+const initializeDefaultBrands = () => {
+  const defaultBrands = {
+    carro: ['Toyota', 'Chevrolet', 'Mazda', 'Nissan', 'Hyundai', 'Kia', 'Ford', 'Honda', 'Renault', 'Volkswagen', 'Mercedes-Benz', 'BMW', 'Audi', 'Suzuki', 'Mitsubishi', 'Jeep', 'Peugeot', 'Fiat', 'Subaru', 'Volvo'],
+    moto: ['Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'Harley-Davidson', 'Ducati', 'KTM', 'BMW', 'Triumph', 'Royal Enfield'],
+    carga: ['Mercedes-Benz', 'Volvo', 'Scania', 'MAN', 'Iveco', 'DAF', 'Renault Trucks', 'Hino', 'Isuzu', 'Freightliner']
+  };
+
+  db.get('SELECT COUNT(*) as count FROM brands', (err, row) => {
+    if (err) {
+      console.error('Error al verificar marcas:', err);
+      return;
+    }
+
+    // Solo inicializar si no hay marcas
+    if (row.count === 0) {
+      const stmt = db.prepare('INSERT OR IGNORE INTO brands (name, category) VALUES (?, ?)');
+
+      Object.entries(defaultBrands).forEach(([category, brands]) => {
+        brands.forEach(brand => {
+          stmt.run(brand, category);
+        });
+      });
+
+      stmt.finalize(() => {
+        console.log('✅ Marcas por defecto inicializadas');
+      });
     }
   });
 };
