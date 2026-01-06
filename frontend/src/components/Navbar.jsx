@@ -23,12 +23,6 @@ const Navbar = () => {
     fetchBrands(selectedCategory)
   }, [selectedCategory])
 
-  // Cerrar menús al cambiar de página
-  useEffect(() => {
-    setShowBrandsMenu(false)
-    setShowCategoriesMenu(false)
-  }, [location])
-
   const fetchBrands = async (category) => {
     try {
       const response = await axios.get(`/api/brands?category=${category}`)
@@ -40,19 +34,15 @@ const Navbar = () => {
 
   const handleBrandClick = (brand) => {
     navigate(`/?marca=${brand}&categoria=${selectedCategory}`)
-    setShowBrandsMenu(false)
   }
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category)
     navigate(`/?categoria=${category}`)
-    setShowCategoriesMenu(false)
   }
 
   const handleAllVehicles = () => {
     navigate('/')
-    setShowBrandsMenu(false)
-    setShowCategoriesMenu(false)
     setSearchQuery('')
   }
 
@@ -75,7 +65,7 @@ const Navbar = () => {
           </Link>
 
           {/* Barra de Búsqueda */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
+          <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-12">
             <div className="relative">
               <input
                 type="text"
@@ -110,15 +100,18 @@ const Navbar = () => {
         </div>
 
         {/* Segunda fila: Navegación */}
-        <div className="flex items-center gap-6 py-3">
+        <div className="flex items-center gap-10 py-3">
             <Link to="/" className="hover:text-blue-100 transition-colors font-medium">
               Inicio
             </Link>
 
             {/* Dropdown de Categorías */}
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setShowCategoriesMenu(true)}
+              onMouseLeave={() => setShowCategoriesMenu(false)}
+            >
               <button
-                onClick={() => setShowCategoriesMenu(!showCategoriesMenu)}
                 className="hover:text-blue-100 transition-colors font-medium flex items-center gap-1"
               >
                 Categorías
@@ -159,9 +152,12 @@ const Navbar = () => {
             </div>
 
             {/* Dropdown de Marcas */}
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setShowBrandsMenu(true)}
+              onMouseLeave={() => setShowBrandsMenu(false)}
+            >
               <button
-                onClick={() => setShowBrandsMenu(!showBrandsMenu)}
                 className="hover:text-blue-100 transition-colors font-medium flex items-center gap-1"
               >
                 Marcas
