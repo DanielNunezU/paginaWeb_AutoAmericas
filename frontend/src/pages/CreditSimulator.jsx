@@ -103,6 +103,18 @@ const CreditSimulator = () => {
     }).format(value)
   }
 
+  const resetForm = () => {
+    setFormData({
+      vehiclePrice: '',
+      downPayment: '',
+      term: 36,
+      salary: '',
+      interestRate: 18
+    })
+    setResult(null)
+    setWarnings([])
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
@@ -222,9 +234,20 @@ const CreditSimulator = () => {
                   </p>
                 </div>
 
-                <button type="submit" className="btn-primary w-full">
-                  Calcular Crédito
-                </button>
+                <div className="flex gap-3">
+                  <button type="submit" className="btn-primary flex-1">
+                    Calcular Crédito
+                  </button>
+                  {result && (
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    >
+                      Limpiar
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
 
@@ -232,6 +255,19 @@ const CreditSimulator = () => {
             <div className="space-y-6">
               {result ? (
                 <>
+                  {/* Botón Nueva Simulación */}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={resetForm}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Nueva Simulación
+                    </button>
+                  </div>
+
                   {/* Alertas */}
                   {warnings.length > 0 && (
                     <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
