@@ -200,6 +200,10 @@ const Navbar = () => {
               Contáctenos
             </Link>
 
+            <Link to="/simulador-credito" className="hover:text-blue-100 transition-colors font-medium">
+              Simulador de Crédito
+            </Link>
+
             {isAuthenticated && (
               <Link to="/admin/dashboard" className="hover:text-blue-100 transition-colors font-medium">
                 Panel Admin
