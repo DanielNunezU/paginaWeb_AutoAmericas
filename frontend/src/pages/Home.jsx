@@ -125,10 +125,10 @@ const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+      <div className="bg-gradient-to-r from-gray-900 via-blue-900 to-red-600 text-white py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-4">Bienvenido a AutoAmericas</h1>
-          <p className="text-xl text-blue-100">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">Bienvenido a Autos Duitama</h1>
+          <p className="text-lg md:text-xl text-gray-100">
             Encuentra el vehículo perfecto para ti. Calidad garantizada y precios competitivos.
           </p>
         </div>
@@ -143,7 +143,7 @@ const Home = () => {
           {hasFilter && (
             <Link
               to="/"
-              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
+              className="text-red-600 hover:text-red-800 font-medium flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -163,7 +163,7 @@ const Home = () => {
               }
             </p>
             {hasFilter && (
-              <Link to="/" className="text-blue-600 hover:underline mt-4 inline-block">
+              <Link to="/" className="text-red-600 hover:underline mt-4 inline-block">
                 Ver todos los vehículos
               </Link>
             )}
