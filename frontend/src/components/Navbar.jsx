@@ -66,13 +66,15 @@ const Navbar = () => {
             <img
               src="/images/logo-autos-duitama.png"
               alt="Autos Duitama"
-              className="h-12 md:h-14 w-auto"
+              className="h-12 md:h-16 w-auto object-contain"
               onError={(e) => {
                 e.target.style.display = 'none'
-                e.target.nextSibling.style.display = 'block'
+                e.target.nextSibling.style.display = 'flex'
               }}
             />
-            <span className="text-2xl font-bold hidden ml-2">Autos Duitama</span>
+            <span className="text-xl md:text-2xl font-bold hidden items-center gap-2">
+              🚗 <span>Autos Duitama</span>
+            </span>
           </Link>
 
           {/* Barra de Búsqueda - Oculta en móvil */}
