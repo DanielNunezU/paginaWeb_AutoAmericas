@@ -63,20 +63,18 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-4 border-b border-gray-700">
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-90 transition-opacity flex-shrink-0">
-            <div className="bg-white rounded-lg px-3 py-2 shadow-lg">
-              <img
-                src="/images/logo-autos-duitama.png"
-                alt="Autos Duitama"
-                className="h-10 md:h-12 w-auto object-contain"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'flex'
-                }}
-              />
-              <span className="text-xl md:text-2xl font-bold hidden items-center gap-2 text-gray-800">
-                🚗 <span>Autos Duitama</span>
-              </span>
-            </div>
+            <img
+              src="/images/logo-autos-duitama.png"
+              alt="Autos Duitama"
+              className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] brightness-110"
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}
+            />
+            <span className="text-xl md:text-2xl font-bold hidden items-center gap-2">
+              🚗 <span>Autos Duitama</span>
+            </span>
           </Link>
 
           {/* Barra de Búsqueda - Oculta en móvil */}
