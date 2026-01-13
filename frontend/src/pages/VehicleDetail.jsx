@@ -164,15 +164,6 @@ const VehicleDetail = () => {
                 )}
               </div>
 
-              {vehicle.description && (
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-3 text-gray-800">Descripción</h2>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                    {vehicle.description}
-                  </p>
-                </div>
-              )}
-
               {vehicle.features && (
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold mb-3 text-gray-800">
@@ -212,28 +203,6 @@ const VehicleDetail = () => {
           </div>
         </div>
 
-        {/* Link compartible */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-3 text-gray-800">Compartir este vehículo</h3>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={window.location.href}
-              readOnly
-              className="input-field flex-1"
-              onClick={(e) => e.target.select()}
-            />
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href)
-                alert('¡Link copiado al portapapeles!')
-              }}
-              className="btn-primary whitespace-nowrap"
-            >
-              Copiar Link
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   )

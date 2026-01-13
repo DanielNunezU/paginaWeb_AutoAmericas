@@ -6,8 +6,9 @@ const CreditSimulator = () => {
     downPayment: '',
     term: 36,
     salary: '',
-    interestRate: 18
+    monthlyRate: 1.5
   })
+  const [useCustomRate, setUseCustomRate] = useState(false)
 
   const [result, setResult] = useState(null)
   const [warnings, setWarnings] = useState([])
@@ -29,7 +30,7 @@ const CreditSimulator = () => {
     const downPayment = parseFloat(formData.downPayment)
     const term = parseInt(formData.term)
     const salary = parseFloat(formData.salary)
-    const annualRate = parseFloat(formData.interestRate)
+    const monthlyRatePercent = parseFloat(formData.monthlyRate)
 
     // Validaciones
     if (downPayment < price * 0.1) {
@@ -42,7 +43,8 @@ const CreditSimulator = () => {
 
     // Cálculo del crédito
     const loanAmount = price - downPayment
-    const monthlyRate = annualRate / 100 / 12
+    const monthlyRate = monthlyRatePercent / 100
+    const annualRate = monthlyRatePercent * 12
 
     // Fórmula de cuota fija (Método Francés)
     const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, term)) /
@@ -89,7 +91,9 @@ const CreditSimulator = () => {
       debtRatio,
       availableIncome,
       amortizationSchedule,
-      downPaymentPercentage: (downPayment / price) * 100
+      downPaymentPercentage: (downPayment / price) * 100,
+      annualRate: annualRate,
+      monthlyRate: monthlyRatePercent
     })
 
     setWarnings(warnings)
@@ -109,7 +113,7 @@ const CreditSimulator = () => {
       downPayment: '',
       term: 36,
       salary: '',
-      interestRate: 18
+      monthlyRate: 1.5
     })
     setResult(null)
     setWarnings([])
@@ -194,23 +198,55 @@ const CreditSimulator = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tasa de Interés Anual (%) *
-                  </label>
-                  <select
-                    name="interestRate"
-                    value={formData.interestRate}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  >
-                    <option value="15">15% EA - Excelente crédito</option>
-                    <option value="18">18% EA - Buen crédito</option>
-                    <option value="21">21% EA - Crédito promedio</option>
-                    <option value="24">24% EA - Crédito alto</option>
-                    <option value="27">27% EA - Crédito muy alto</option>
-                  </select>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Tasa de Interés Mensual (%) *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setUseCustomRate(!useCustomRate)}
+                      className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      {useCustomRate ? 'Usar opciones predefinidas' : 'Ingresar tasa manual'}
+                    </button>
+                  </div>
+
+                  {useCustomRate ? (
+                    <input
+                      type="number"
+                      name="monthlyRate"
+                      value={formData.monthlyRate}
+                      onChange={handleInputChange}
+                      required
+                      min="0.1"
+                      max="5"
+                      step="0.01"
+                      className="input-field"
+                      placeholder="Ej: 1.5"
+                    />
+                  ) : (
+                    <select
+                      name="monthlyRate"
+                      value={formData.monthlyRate}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    >
+                      <option value="1.25">1.25% mensual - Excelente crédito</option>
+                      <option value="1.5">1.5% mensual - Buen crédito</option>
+                      <option value="1.75">1.75% mensual - Crédito promedio</option>
+                      <option value="2">2% mensual - Crédito alto</option>
+                      <option value="2.25">2.25% mensual - Crédito muy alto</option>
+                    </select>
+                  )}
+
+                  <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <span className="font-medium">Tasa anual:</span> {(parseFloat(formData.monthlyRate) * 12).toFixed(2)}% EA
+                      <span className="text-blue-600 ml-1">({formData.monthlyRate}% × 12 meses)</span>
+                    </p>
+                  </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    Tasa efectiva anual. Varía según tu historial crediticio.
+                    Tasa mensual. Varía según tu historial crediticio.
                   </p>
                 </div>
 
@@ -327,6 +363,21 @@ const CreditSimulator = () => {
                         <span className="text-lg font-semibold text-green-600">
                           {result.downPaymentPercentage.toFixed(1)}%
                         </span>
+                      </div>
+
+                      <div className="flex justify-between items-center pb-3 border-b bg-blue-50 -mx-6 px-6 py-3">
+                        <div>
+                          <span className="text-gray-700 font-medium">Tasa de Interés</span>
+                          <p className="text-xs text-gray-500">Mensual</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg font-bold text-blue-600">
+                            {result.monthlyRate}% mensual
+                          </span>
+                          <p className="text-sm text-blue-700">
+                            ({result.annualRate.toFixed(2)}% EA)
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>

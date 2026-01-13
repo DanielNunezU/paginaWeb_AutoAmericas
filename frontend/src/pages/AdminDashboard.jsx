@@ -283,6 +283,7 @@ const AdminDashboard = () => {
                     <option value="carro">Carros</option>
                     <option value="moto">Motos</option>
                     <option value="carga">Carga Pesada</option>
+                    <option value="maquinaria">Maquinaria Amarilla</option>
                   </select>
                 </div>
                 <div className="flex items-end">
@@ -295,9 +296,9 @@ const AdminDashboard = () => {
 
             {/* Lista de marcas por categoría */}
             <div className="space-y-6">
-              {['carro', 'moto', 'carga'].map((category) => {
+              {['carro', 'moto', 'carga', 'maquinaria'].map((category) => {
                 const categoryBrands = allBrands.filter(b => b.category === category)
-                const categoryLabel = category === 'carro' ? 'Carros' : category === 'moto' ? 'Motos' : 'Carga Pesada'
+                const categoryLabel = category === 'carro' ? 'Carros' : category === 'moto' ? 'Motos' : category === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'
 
                 return (
                   <div key={category}>
@@ -367,6 +368,7 @@ const AdminDashboard = () => {
                     <option value="carro">Carro</option>
                     <option value="moto">Moto</option>
                     <option value="carga">Carga Pesada</option>
+                    <option value="maquinaria">Maquinaria Amarilla</option>
                   </select>
                 </div>
 
@@ -519,20 +521,6 @@ const AdminDashboard = () => {
                     <option value="reserved">Reservado</option>
                   </select>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Descripción
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                  className="input-field"
-                  placeholder="Describe el vehículo..."
-                />
               </div>
 
               <div>

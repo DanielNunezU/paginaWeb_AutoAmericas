@@ -25,8 +25,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Teléfono</h3>
-                  <a href="tel:+573001234567" className="text-blue-600 hover:underline">
-                    +57 300 123 4567
+                  <a href="tel:+573114605962" className="text-blue-600 hover:underline">
+                    +57 311 4605962
                   </a>
                 </div>
               </div>
@@ -41,12 +41,12 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">WhatsApp</h3>
                   <a
-                    href="https://wa.me/573001234567"
+                    href="https://wa.me/573114605962"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green-600 hover:underline"
                   >
-                    +57 300 123 4567
+                    +57 311 4605962
                   </a>
                 </div>
               </div>
@@ -60,8 +60,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                  <a href="mailto:info@autoamericas.com" className="text-purple-600 hover:underline">
-                    info@autoamericas.com
+                  <a href="mailto:info@autosduitama.com" className="text-purple-600 hover:underline">
+                    info@autosduitama.com
                   </a>
                 </div>
               </div>
@@ -77,8 +77,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Dirección</h3>
                   <p className="text-gray-600">
-                    Calle 123 #45-67<br />
-                    Bogotá, Colombia
+                    Cra 42 #9 50<br />
+                    Duitama, Colombia
                   </p>
                 </div>
               </div>
@@ -187,20 +187,34 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Mapa (placeholder) */}
+        {/* Mapa */}
         <div className="mt-12 max-w-6xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Nuestra Ubicación</h2>
-            <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
-              <div className="text-center text-gray-600">
-                <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <div className="rounded-lg overflow-hidden h-96">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.1234567890123!2d-73.0333!3d5.8333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a45b0e6e0f0f1%3A0x1234567890abcdef!2sCra.%2042%20%239-50%2C%20Duitama%2C%20Boyac%C3%A1%2C%20Colombia!5e0!3m2!1ses!2sco!4v1234567890123"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Ubicación Autos Duitama"
+              ></iframe>
+            </div>
+            <div className="mt-4 text-center">
+              <a
+                href="https://www.google.com/maps/search/Cra+42+%239+50,+Duitama,+Colombia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                <p className="text-lg">
-                  Aquí se puede integrar Google Maps con tu ubicación
-                </p>
-              </div>
+                Abrir en Google Maps
+              </a>
             </div>
           </div>
         </div>

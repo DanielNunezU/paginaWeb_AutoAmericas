@@ -41,7 +41,7 @@ router.post('/', authMiddleware, (req, res) => {
     }
 
     // Validar categoría
-    if (!['carro', 'moto', 'carga'].includes(category)) {
+    if (!['carro', 'moto', 'carga', 'maquinaria'].includes(category)) {
       return res.status(400).json({ message: 'Categoría inválida' });
     }
 

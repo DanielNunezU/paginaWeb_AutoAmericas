@@ -101,6 +101,7 @@ const Home = () => {
     if (cat === 'carro') return 'Carros'
     if (cat === 'moto') return 'Motos'
     if (cat === 'carga') return 'Carga Pesada'
+    if (cat === 'maquinaria') return 'Maquinaria Amarilla'
     return ''
   }
 
@@ -125,11 +126,17 @@ const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-gray-900 via-blue-900 to-red-600 text-white py-12 md:py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">Bienvenido a Autos Duitama</h1>
-          <p className="text-lg md:text-xl text-gray-100">
-            Encuentra el vehículo perfecto para ti. Calidad garantizada y precios competitivos.
+      <div
+        className="relative bg-cover bg-center bg-no-repeat text-white py-24 md:py-32 lg:py-40"
+        style={{ backgroundImage: "url('/images/fondo.jpeg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <p className="text-2xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">
+            Encuentra el vehículo perfecto para ti
+          </p>
+          <p className="text-lg md:text-2xl mt-4 text-gray-100 drop-shadow-md">
+            Calidad garantizada y precios competitivos
           </p>
         </div>
       </div>

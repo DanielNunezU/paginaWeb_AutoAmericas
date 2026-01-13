@@ -66,7 +66,7 @@ const Navbar = () => {
             <img
               src="/images/logo-autos-duitama.png"
               alt="Autos Duitama"
-              className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] brightness-110"
+              className="h-14 md:h-16 w-auto object-contain"
               onError={(e) => {
                 e.target.style.display = 'none'
                 e.target.nextSibling.style.display = 'flex'
@@ -153,7 +153,7 @@ const Navbar = () => {
         </div>
 
         {/* Segunda fila: Navegación Desktop */}
-        <div className="hidden md:flex items-center gap-6 lg:gap-10 py-3">
+        <div className="hidden md:flex items-center gap-8 lg:gap-14 xl:gap-16 py-3">
             <Link to="/" className="hover:text-red-400 transition-colors font-medium">
               Inicio
             </Link>
@@ -200,6 +200,12 @@ const Navbar = () => {
                   >
                     🚚 Carga Pesada
                   </button>
+                  <button
+                    onClick={() => handleCategoryClick('maquinaria')}
+                    className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors"
+                  >
+                    🚜 Maquinaria Amarilla
+                  </button>
                 </div>
               )}
             </div>
@@ -229,7 +235,7 @@ const Navbar = () => {
                   </button>
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-                    {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : 'Carga Pesada'}
+                    {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
                   </div>
                   {brands.map((brand) => (
                     <button
@@ -313,6 +319,12 @@ const Navbar = () => {
                     >
                       🚚 Carga Pesada
                     </button>
+                    <button
+                      onClick={() => { handleCategoryClick('maquinaria'); setIsMobileMenuOpen(false); }}
+                      className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
+                    >
+                      🚜 Maquinaria Amarilla
+                    </button>
                   </div>
                 )}
               </div>
@@ -337,7 +349,7 @@ const Navbar = () => {
                       Todas las marcas
                     </button>
                     <div className="px-8 py-2 text-xs font-semibold text-gray-400 uppercase">
-                      {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : 'Carga Pesada'}
+                      {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
                     </div>
                     {brands.map((brand) => (
                       <button

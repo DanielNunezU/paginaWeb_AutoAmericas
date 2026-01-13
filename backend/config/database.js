@@ -105,7 +105,8 @@ const initializeDefaultBrands = () => {
   const defaultBrands = {
     carro: ['Toyota', 'Chevrolet', 'Mazda', 'Nissan', 'Hyundai', 'Kia', 'Ford', 'Honda', 'Renault', 'Volkswagen', 'Mercedes-Benz', 'BMW', 'Audi', 'Suzuki', 'Mitsubishi', 'Jeep', 'Peugeot', 'Fiat', 'Subaru', 'Volvo'],
     moto: ['Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'Harley-Davidson', 'Ducati', 'KTM', 'BMW', 'Triumph', 'Royal Enfield'],
-    carga: ['Mercedes-Benz', 'Volvo', 'Scania', 'MAN', 'Iveco', 'DAF', 'Renault Trucks', 'Hino', 'Isuzu', 'Freightliner']
+    carga: ['Mercedes-Benz', 'Volvo', 'Scania', 'MAN', 'Iveco', 'DAF', 'Renault Trucks', 'Hino', 'Isuzu', 'Freightliner'],
+    maquinaria: ['Caterpillar', 'Komatsu', 'John Deere', 'Volvo', 'JCB', 'Case', 'Hitachi', 'Liebherr', 'Doosan', 'Hyundai', 'Bobcat', 'New Holland', 'Kobelco', 'XCMG', 'Sany']
   };
 
   db.get('SELECT COUNT(*) as count FROM brands', (err, row) => {
