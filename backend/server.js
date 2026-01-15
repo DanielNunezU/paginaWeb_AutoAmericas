@@ -70,9 +70,22 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Servir frontend en producción
-if (isProduction) {
-  const frontendPath = path.join(__dirname, '../frontend/dist');
+// Servir frontend siempre (busca en varias ubicaciones)
+const possibleFrontendPaths = [
+  path.join(__dirname, '../frontend/dist'),
+  path.join(__dirname, '../../frontend/dist'),
+  path.join(__dirname, '../dist')
+];
+
+let frontendPath = null;
+for (const p of possibleFrontendPaths) {
+  if (require('fs').existsSync(path.join(p, 'index.html'))) {
+    frontendPath = p;
+    break;
+  }
+}
+
+if (frontendPath) {
   app.use(express.static(frontendPath));
 
   // Todas las rutas no-API van al frontend (SPA)
@@ -83,11 +96,12 @@ if (isProduction) {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 } else {
-  // Solo en desarrollo mostrar JSON en la raíz
+  // Si no encuentra frontend, mostrar JSON en la raíz
   app.get('/', (req, res) => {
     res.json({
-      message: 'API de AutoAmericas - Compraventa de Vehículos (Dev)',
-      version: '1.0.0'
+      message: 'API de AutoAmericas - Frontend no encontrado',
+      version: '1.0.0',
+      searchedPaths: possibleFrontendPaths
     });
   });
 }
