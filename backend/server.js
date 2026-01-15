@@ -100,12 +100,16 @@ app.get('/api/debug/test-login', (req, res) => {
   const testUser = 'adminAut';
   const testPass = 'admin123';
 
+  // Mostrar ruta de la base de datos que usa database.js
+  const configDbPath = path.join(__dirname, 'config', '..', 'autoamericas.db');
+  const serverDbPath = path.join(__dirname, 'autoamericas.db');
+
   db.get('SELECT * FROM users WHERE username = ?', [testUser], (err, user) => {
     if (err) {
-      return res.json({ step: 'query', error: err.message });
+      return res.json({ step: 'query', error: err.message, configDbPath, serverDbPath });
     }
     if (!user) {
-      return res.json({ step: 'user', error: 'Usuario no encontrado' });
+      return res.json({ step: 'user', error: 'Usuario no encontrado', configDbPath, serverDbPath, dirname: __dirname });
     }
 
     const isValid = bcrypt.compareSync(testPass, user.password);
