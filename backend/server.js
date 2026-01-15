@@ -83,11 +83,15 @@ app.get('/api', (req, res) => {
 
 // Ruta de debug temporal - VER USUARIOS EN LA BASE DE DATOS
 app.get('/api/debug/users', (req, res) => {
+  const dbPath = require('path').join(__dirname, 'autoamericas.db');
+  const fs = require('fs');
+  const dbExists = fs.existsSync(dbPath);
+
   db.all('SELECT id, username, role FROM users', (err, users) => {
     if (err) {
-      return res.json({ error: err.message });
+      return res.json({ error: err.message, dbPath, dbExists });
     }
-    res.json({ users: users || [], count: users ? users.length : 0 });
+    res.json({ users: users || [], count: users ? users.length : 0, dbPath, dbExists });
   });
 });
 
@@ -97,16 +101,29 @@ app.get('/api/debug/create-admin', (req, res) => {
   const adminPass = 'admin123';
   const hashedPassword = bcrypt.hashSync(adminPass, 10);
 
-  db.run(
-    'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
-    [adminUser, hashedPassword, 'admin'],
-    function(err) {
-      if (err) {
-        return res.json({ error: err.message });
-      }
-      res.json({ success: true, message: 'Admin creado', id: this.lastID, username: adminUser, password: adminPass });
+  // Crear tabla si no existe
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT DEFAULT 'admin',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) {
+      return res.json({ error: 'Error creando tabla: ' + err.message });
     }
-  );
+
+    db.run(
+      'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+      [adminUser, hashedPassword, 'admin'],
+      function(err) {
+        if (err) {
+          return res.json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Admin creado', id: this.lastID, username: adminUser, password: adminPass });
+      }
+    );
+  });
 });
 
 // Servir frontend desde backend/public
