@@ -71,6 +71,16 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Ruta de debug temporal - VER USUARIOS EN LA BASE DE DATOS
+app.get('/api/debug/users', (req, res) => {
+  db.all('SELECT id, username, role FROM users', (err, users) => {
+    if (err) {
+      return res.json({ error: err.message });
+    }
+    res.json({ users: users || [], count: users ? users.length : 0 });
+  });
+});
+
 // Servir frontend desde backend/public
 const fs = require('fs');
 const frontendPath = path.join(__dirname, 'public');
