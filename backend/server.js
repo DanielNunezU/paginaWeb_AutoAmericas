@@ -23,30 +23,30 @@ app.use(express.urlencoded({ extended: true }));
 // Servir archivos estáticos (imágenes)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Crear usuario admin por defecto si no existe
+// Crear o actualizar usuario admin
 const createDefaultAdmin = () => {
-  db.get('SELECT * FROM users WHERE username = ?', [process.env.ADMIN_USERNAME || 'admin'], (err, adminExists) => {
+  const adminUser = process.env.ADMIN_USERNAME || 'admin';
+  const adminPass = process.env.ADMIN_PASSWORD || 'admin123';
+  const hashedPassword = bcrypt.hashSync(adminPass, 10);
+
+  // Primero eliminar cualquier admin existente y crear uno nuevo
+  db.run('DELETE FROM users WHERE role = ?', ['admin'], (err) => {
     if (err) {
-      console.error('Error al verificar admin:', err);
-      return;
+      console.error('Error al limpiar admin:', err);
     }
 
-    if (!adminExists) {
-      const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin123', 10);
-      db.run(
-        'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
-        [process.env.ADMIN_USERNAME || 'admin', hashedPassword, 'admin'],
-        (err) => {
-          if (err) {
-            console.error('Error al crear admin:', err);
-          } else {
-            console.log('✅ Usuario administrador creado');
-            console.log(`   Usuario: ${process.env.ADMIN_USERNAME || 'admin'}`);
-            console.log(`   Contraseña: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
-          }
+    db.run(
+      'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+      [adminUser, hashedPassword, 'admin'],
+      (err) => {
+        if (err) {
+          console.error('Error al crear admin:', err);
+        } else {
+          console.log('✅ Usuario administrador configurado');
+          console.log(`   Usuario: ${adminUser}`);
         }
-      );
-    }
+      }
+    );
   });
 };
 
