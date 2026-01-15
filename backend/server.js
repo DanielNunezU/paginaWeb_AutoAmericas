@@ -53,13 +53,13 @@ const createDefaultAdmin = () => {
 // Esperar a que las tablas se creen antes de crear el admin
 setTimeout(createDefaultAdmin, 1000);
 
-// Rutas
+// Rutas API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vehicles', require('./routes/vehicles'));
 app.use('/api/brands', require('./routes/brands'));
 
-// Ruta de bienvenida
-app.get('/', (req, res) => {
+// Ruta de info de la API (solo para /api)
+app.get('/api', (req, res) => {
   res.json({
     message: 'API de AutoAmericas - Compraventa de Vehículos',
     version: '1.0.0',
@@ -81,6 +81,14 @@ if (isProduction) {
       return next();
     }
     res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  // Solo en desarrollo mostrar JSON en la raíz
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'API de AutoAmericas - Compraventa de Vehículos (Dev)',
+      version: '1.0.0'
+    });
   });
 }
 
