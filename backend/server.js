@@ -136,11 +136,13 @@ app.get('/api/debug/test-login', (req, res) => {
   });
 });
 
-// Ruta para crear admin manualmente
+// Ruta para crear admins manualmente
 app.get('/api/debug/create-admin', (req, res) => {
-  const adminUser = 'adminAut';
-  const adminPass = 'admin123';
-  const hashedPassword = bcrypt.hashSync(adminPass, 10);
+  const users = [
+    { username: 'adminAut', password: 'admin123', role: 'admin' },
+    { username: 'userAut1', password: 'adminAut123', role: 'admin' },
+    { username: 'userAut2', password: 'adminAut223', role: 'admin' }
+  ];
 
   // Crear tabla si no existe
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -154,16 +156,25 @@ app.get('/api/debug/create-admin', (req, res) => {
       return res.json({ error: 'Error creando tabla: ' + err.message });
     }
 
-    db.run(
-      'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
-      [adminUser, hashedPassword, 'admin'],
-      function(err) {
-        if (err) {
-          return res.json({ error: err.message });
+    const createdUsers = [];
+    let completed = 0;
+
+    users.forEach(user => {
+      const hashedPassword = bcrypt.hashSync(user.password, 10);
+      db.run(
+        'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+        [user.username, hashedPassword, user.role],
+        function(err) {
+          completed++;
+          if (!err) {
+            createdUsers.push({ username: user.username, password: user.password, role: user.role });
+          }
+          if (completed === users.length) {
+            res.json({ success: true, message: 'Usuarios creados', users: createdUsers });
+          }
         }
-        res.json({ success: true, message: 'Admin creado', id: this.lastID, username: adminUser, password: adminPass });
-      }
-    );
+      );
+    });
   });
 });
 
