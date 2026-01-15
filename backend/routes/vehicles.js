@@ -139,7 +139,7 @@ router.post('/', authMiddleware, upload.array('images', 10), (req, res) => {
   try {
     const {
       title, brand, model, year, price, mileage,
-      fuel_type, transmission, color, description, features, category, status
+      fuel_type, transmission, color, description, features, category, status, load_capacity, engine
     } = req.body;
 
     if (!title || !brand || !model || !year || !price) {
@@ -153,15 +153,15 @@ router.post('/', authMiddleware, upload.array('images', 10), (req, res) => {
       }
 
       const query = `
-        INSERT INTO vehicles (slug, title, brand, model, year, price, mileage, fuel_type, transmission, color, description, features, category, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO vehicles (slug, title, brand, model, year, price, mileage, fuel_type, transmission, color, description, features, category, status, load_capacity, engine)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const params = [
         slug, title, brand, model, year, price,
         mileage || null, fuel_type || null, transmission || null,
         color || null, description || null, features || null,
-        category || 'carro', status || 'available'
+        category || 'carro', status || 'available', load_capacity || null, engine || null
       ];
 
       db.run(query, params, function(err) {
@@ -214,7 +214,7 @@ router.put('/:id', authMiddleware, upload.array('images', 10), (req, res) => {
     const { id } = req.params;
     const {
       title, brand, model, year, price, mileage,
-      fuel_type, transmission, color, description, features, category, status
+      fuel_type, transmission, color, description, features, category, status, load_capacity, engine
     } = req.body;
 
     db.get('SELECT * FROM vehicles WHERE id = ?', [id], (err, vehicle) => {
@@ -232,7 +232,7 @@ router.put('/:id', authMiddleware, upload.array('images', 10), (req, res) => {
           UPDATE vehicles
           SET slug = ?, title = ?, brand = ?, model = ?, year = ?, price = ?,
               mileage = ?, fuel_type = ?, transmission = ?, color = ?,
-              description = ?, features = ?, category = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+              description = ?, features = ?, category = ?, status = ?, load_capacity = ?, engine = ?, updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `;
 
@@ -251,6 +251,8 @@ router.put('/:id', authMiddleware, upload.array('images', 10), (req, res) => {
           features || vehicle.features,
           category || vehicle.category || 'carro',
           status || vehicle.status,
+          load_capacity || vehicle.load_capacity,
+          engine || vehicle.engine,
           id
         ];
 

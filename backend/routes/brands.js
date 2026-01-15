@@ -51,7 +51,7 @@ router.post('/', authMiddleware, (req, res) => {
       function(err) {
         if (err) {
           if (err.message.includes('UNIQUE')) {
-            return res.status(400).json({ message: 'Esta marca ya existe' });
+            return res.status(400).json({ message: 'Esta marca ya existe en esta categoría' });
           }
           console.error('Error al crear marca:', err);
           return res.status(500).json({ message: 'Error del servidor' });

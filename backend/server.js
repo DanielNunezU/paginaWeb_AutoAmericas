@@ -7,9 +7,16 @@ const db = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Middleware
-app.use(cors());
+// Middleware - CORS configurado para producción
+const corsOptions = {
+  origin: isProduction
+    ? process.env.FRONTEND_URL || true
+    : true,
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,6 +69,20 @@ app.get('/', (req, res) => {
     }
   });
 });
+
+// Servir frontend en producción
+if (isProduction) {
+  const frontendPath = path.join(__dirname, '../frontend/dist');
+  app.use(express.static(frontendPath));
+
+  // Todas las rutas no-API van al frontend (SPA)
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
 
 // Manejo de errores
 app.use((err, req, res, next) => {

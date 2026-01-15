@@ -162,6 +162,20 @@ const VehicleDetail = () => {
                     <div className="font-semibold text-lg">{vehicle.color}</div>
                   </div>
                 )}
+
+                {vehicle.engine && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-gray-600 text-sm mb-1">Motor</div>
+                    <div className="font-semibold text-lg">{vehicle.engine}</div>
+                  </div>
+                )}
+
+                {vehicle.load_capacity && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-gray-600 text-sm mb-1">Capacidad de Carga</div>
+                    <div className="font-semibold text-lg">{vehicle.load_capacity}</div>
+                  </div>
+                )}
               </div>
 
               {vehicle.features && (
@@ -184,13 +198,7 @@ const VehicleDetail = () => {
                 </p>
                 <div className="flex flex-col gap-2">
                   <a
-                    href="tel:+57300000000"
-                    className="btn-primary text-center"
-                  >
-                    📞 Llamar ahora
-                  </a>
-                  <a
-                    href="https://wa.me/57300000000"
+                    href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%20Auto%20Americas%20Motors%2C%20estoy%20interesad%40%20en%20un%20veh%C3%ADculo..."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-center"

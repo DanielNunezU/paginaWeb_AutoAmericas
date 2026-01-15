@@ -24,7 +24,9 @@ const AdminDashboard = () => {
     description: '',
     features: '',
     category: 'carro',
-    status: 'available'
+    status: 'available',
+    load_capacity: '',
+    engine: ''
   })
   const [images, setImages] = useState([])
   const [brands, setBrands] = useState([])
@@ -150,7 +152,9 @@ const AdminDashboard = () => {
       description: vehicle.description || '',
       features: vehicle.features || '',
       category: vehicle.category || 'carro',
-      status: vehicle.status
+      status: vehicle.status,
+      load_capacity: vehicle.load_capacity || '',
+      engine: vehicle.engine || ''
     })
     setShowForm(true)
   }
@@ -189,7 +193,9 @@ const AdminDashboard = () => {
       description: '',
       features: '',
       category: 'carro',
-      status: 'available'
+      status: 'available',
+      load_capacity: '',
+      engine: ''
     })
     setImages([])
     setEditingVehicle(null)
@@ -280,7 +286,7 @@ const AdminDashboard = () => {
                     onChange={(e) => setNewBrandCategory(e.target.value)}
                     className="input-field"
                   >
-                    <option value="carro">Carros</option>
+                    <option value="carro">Carros y Camionetas</option>
                     <option value="moto">Motos</option>
                     <option value="carga">Carga Pesada</option>
                     <option value="maquinaria">Maquinaria Amarilla</option>
@@ -298,7 +304,7 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               {['carro', 'moto', 'carga', 'maquinaria'].map((category) => {
                 const categoryBrands = allBrands.filter(b => b.category === category)
-                const categoryLabel = category === 'carro' ? 'Carros' : category === 'moto' ? 'Motos' : category === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'
+                const categoryLabel = category === 'carro' ? 'Carros y Camionetas' : category === 'moto' ? 'Motos' : category === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'
 
                 return (
                   <div key={category}>
@@ -365,7 +371,7 @@ const AdminDashboard = () => {
                     required
                     className="input-field"
                   >
-                    <option value="carro">Carro</option>
+                    <option value="carro">Carro / Camioneta</option>
                     <option value="moto">Moto</option>
                     <option value="carga">Carga Pesada</option>
                     <option value="maquinaria">Maquinaria Amarilla</option>
@@ -508,6 +514,20 @@ const AdminDashboard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Motor
+                  </label>
+                  <input
+                    type="text"
+                    name="engine"
+                    value={formData.engine}
+                    onChange={handleInputChange}
+                    className="input-field"
+                    placeholder="Ej: 2.0L Turbo"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Estado
                   </label>
                   <select
@@ -521,6 +541,22 @@ const AdminDashboard = () => {
                     <option value="reserved">Reservado</option>
                   </select>
                 </div>
+
+                {(formData.category === 'carga' || formData.category === 'maquinaria') && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Capacidad de Carga
+                    </label>
+                    <input
+                      type="text"
+                      name="load_capacity"
+                      value={formData.load_capacity}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Ej: 10 toneladas"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

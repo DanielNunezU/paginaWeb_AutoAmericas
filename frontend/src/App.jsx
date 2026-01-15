@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
+import VehiclesList from './pages/VehiclesList'
 import VehicleDetail from './pages/VehicleDetail'
 import Contact from './pages/Contact'
 import CreditSimulator from './pages/CreditSimulator'
@@ -18,6 +19,7 @@ function App() {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/vehiculos" element={<VehiclesList />} />
               <Route path="/vehiculo/:slug" element={<VehicleDetail />} />
               <Route path="/contacto" element={<Contact />} />
               <Route path="/simulador-credito" element={<CreditSimulator />} />

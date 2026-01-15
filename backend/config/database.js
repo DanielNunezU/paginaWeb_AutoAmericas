@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcryptjs');
 const path = require('path');
 
 const dbPath = path.join(__dirname, '../autoamericas.db');
@@ -12,6 +13,97 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Habilitar foreign keys
 db.run('PRAGMA foreign_keys = ON');
+
+// Migrar tabla brands para permitir marcas repetidas en diferentes categorías
+const migrateBrandsTable = () => {
+  // Verificar si necesitamos migrar (si existe índice único solo en name)
+  db.all("PRAGMA index_list('brands')", (err, indexes) => {
+    if (err) return;
+
+    // Buscar si hay un índice único solo en 'name'
+    const needsMigration = indexes.some(idx =>
+      idx.unique === 1 && idx.name === 'sqlite_autoindex_brands_1'
+    );
+
+    if (needsMigration) {
+      console.log('Migrando tabla brands para permitir marcas en múltiples categorías...');
+
+      db.serialize(() => {
+        // Crear tabla temporal con nueva estructura
+        db.run(`
+          CREATE TABLE IF NOT EXISTS brands_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            category TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(name, category)
+          )
+        `);
+
+        // Copiar datos existentes
+        db.run(`INSERT OR IGNORE INTO brands_new (id, name, category, created_at) SELECT id, name, category, created_at FROM brands`);
+
+        // Eliminar tabla vieja
+        db.run(`DROP TABLE brands`);
+
+        // Renombrar tabla nueva
+        db.run(`ALTER TABLE brands_new RENAME TO brands`, (err) => {
+          if (!err) {
+            console.log('✅ Migración de tabla brands completada');
+          }
+        });
+      });
+    }
+  });
+};
+
+// Inicializar usuarios colaboradores por defecto
+const initializeDefaultUsers = () => {
+  const defaultUsers = [
+    { username: 'ColabPri126', password: 'AutDuit126', role: 'colaborador_primario' },
+    { username: 'ColabSec226', password: 'AutDuit226', role: 'colaborador_secundario' },
+    { username: 'ColabTer326', password: 'AutDuit326', role: 'colaborador_terciario' }
+  ];
+
+  defaultUsers.forEach(user => {
+    const hashedPassword = bcrypt.hashSync(user.password, 10);
+
+    db.get('SELECT id FROM users WHERE username = ?', [user.username], (err, row) => {
+      if (err) {
+        console.error('Error al verificar usuario:', err);
+        return;
+      }
+
+      if (row) {
+        // Actualizar contraseña si el usuario ya existe
+        db.run(
+          'UPDATE users SET password = ?, role = ? WHERE username = ?',
+          [hashedPassword, user.role, user.username],
+          (err) => {
+            if (err) {
+              console.error(`Error al actualizar usuario ${user.username}:`, err);
+            } else {
+              console.log(`✅ Usuario ${user.username} actualizado`);
+            }
+          }
+        );
+      } else {
+        // Crear usuario si no existe
+        db.run(
+          'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+          [user.username, hashedPassword, user.role],
+          (err) => {
+            if (err) {
+              console.error(`Error al crear usuario ${user.username}:`, err);
+            } else {
+              console.log(`✅ Usuario ${user.username} creado`);
+            }
+          }
+        );
+      }
+    });
+  });
+};
 
 // Crear tablas si no existen
 const createTables = () => {
@@ -27,6 +119,9 @@ const createTables = () => {
   `, (err) => {
     if (err) {
       console.error('Error al crear tabla users:', err);
+    } else {
+      // Inicializar usuarios colaboradores por defecto
+      initializeDefaultUsers();
     }
   });
 
@@ -61,6 +156,18 @@ const createTables = () => {
           console.error('Error al agregar columna category:', err);
         }
       });
+      // Agregar columna load_capacity si no existe (para carga pesada y maquinaria)
+      db.run(`ALTER TABLE vehicles ADD COLUMN load_capacity TEXT`, (err) => {
+        if (err && !err.message.includes('duplicate column')) {
+          console.error('Error al agregar columna load_capacity:', err);
+        }
+      });
+      // Agregar columna engine si no existe
+      db.run(`ALTER TABLE vehicles ADD COLUMN engine TEXT`, (err) => {
+        if (err && !err.message.includes('duplicate column')) {
+          console.error('Error al agregar columna engine:', err);
+        }
+      });
     }
   });
 
@@ -82,18 +189,21 @@ const createTables = () => {
     }
   });
 
-  // Tabla de marcas personalizadas
+  // Tabla de marcas personalizadas (permite misma marca en diferentes categorías)
   db.run(`
     CREATE TABLE IF NOT EXISTS brands (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
       category TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(name, category)
     )
   `, (err) => {
     if (err) {
       console.error('Error al crear tabla brands:', err);
     } else {
+      // Migrar bases de datos existentes: remover restricción UNIQUE solo en name
+      migrateBrandsTable();
       // Inicializar marcas por defecto
       initializeDefaultBrands();
     }

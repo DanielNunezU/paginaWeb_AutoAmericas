@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Link, useSearchParams, useLocation } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 
-const Home = () => {
+const VehiclesList = () => {
   const [vehicles, setVehicles] = useState([])
   const [filteredVehicles, setFilteredVehicles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchParams] = useSearchParams()
-  const location = useLocation()
-  const [randomSeed, setRandomSeed] = useState(Date.now())
-
-  // Actualizar seed cada vez que se hace clic en inicio/logo para mostrar vehículos diferentes
-  useEffect(() => {
-    setRandomSeed(Date.now())
-  }, [location.state])
 
   useEffect(() => {
     fetchVehicles()
@@ -27,21 +20,18 @@ const Home = () => {
 
     let filtered = vehicles
 
-    // Filtrar por categoría si existe
     if (categoria) {
       filtered = filtered.filter(v =>
         v.category && v.category.toLowerCase() === categoria.toLowerCase()
       )
     }
 
-    // Filtrar por marca si existe
     if (marca) {
       filtered = filtered.filter(v =>
         v.brand.toLowerCase() === marca.toLowerCase()
       )
     }
 
-    // Filtrar por búsqueda si existe
     if (busqueda) {
       const searchLower = busqueda.toLowerCase()
       filtered = filtered.filter(v => {
@@ -103,55 +93,6 @@ const Home = () => {
   const categoria = searchParams.get('categoria')
   const busqueda = searchParams.get('busqueda')
 
-  // Si no hay filtros, mostrar solo 6 vehículos aleatorios (uno de cada categoría si es posible)
-  // Se usa randomSeed para forzar recálculo al hacer clic en inicio/logo
-  const getDisplayVehicles = () => {
-    // Usar randomSeed para que React detecte el cambio y recalcule
-    const _ = randomSeed
-    const hasFilter = marca || categoria || busqueda
-    if (hasFilter) {
-      return filteredVehicles
-    }
-
-    // Función para mezclar array aleatoriamente (Fisher-Yates shuffle)
-    const shuffleArray = (array) => {
-      const shuffled = [...array]
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-      }
-      return shuffled
-    }
-
-    // Mezclar vehículos aleatoriamente
-    const shuffledVehicles = shuffleArray(filteredVehicles)
-
-    // Sin filtros: seleccionar uno aleatorio de cada categoría
-    const categories = ['carro', 'moto', 'carga', 'maquinaria']
-    const selected = []
-
-    // Primero agregar uno aleatorio de cada categoría
-    categories.forEach(cat => {
-      const vehicleOfCategory = shuffledVehicles.find(
-        v => v.category === cat && !selected.includes(v)
-      )
-      if (vehicleOfCategory) {
-        selected.push(vehicleOfCategory)
-      }
-    })
-
-    // Completar hasta 6 con vehículos aleatorios restantes
-    shuffledVehicles.forEach(v => {
-      if (selected.length < 6 && !selected.includes(v)) {
-        selected.push(v)
-      }
-    })
-
-    return selected.slice(0, 6)
-  }
-
-  const displayVehicles = getDisplayVehicles()
-
   const getCategoryLabel = (cat) => {
     if (cat === 'carro') return 'Carros y Camionetas'
     if (cat === 'moto') return 'Motos'
@@ -173,49 +114,43 @@ const Home = () => {
     if (categoria) {
       return getCategoryLabel(categoria)
     }
-    return 'Vehículos Disponibles'
+    return 'Todos los Vehículos'
   }
 
   const hasFilter = marca || categoria || busqueda
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Hero Section */}
-      <div
-        className="relative bg-cover bg-center bg-no-repeat text-white py-24 md:py-32 lg:py-40"
-        style={{ backgroundImage: "url('/images/fondo.jpeg')" }}
-      >
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <p className="text-2xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">
-            Encuentra el vehículo perfecto para ti
-          </p>
-          <p className="text-lg md:text-2xl mt-4 text-gray-100 drop-shadow-md">
-            Calidad garantizada y precios competitivos
-          </p>
-        </div>
-      </div>
-
-      {/* Vehículos disponibles */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800">
             {getPageTitle()}
           </h2>
-          {hasFilter && (
+          <div className="flex gap-4">
+            {hasFilter && (
+              <Link
+                to="/vehiculos"
+                className="text-red-600 hover:text-red-800 font-medium flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Limpiar filtros
+              </Link>
+            )}
             <Link
               to="/"
-              className="text-red-600 hover:text-red-800 font-medium flex items-center gap-2"
+              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Limpiar filtros
+              Volver al inicio
             </Link>
-          )}
+          </div>
         </div>
 
-        {displayVehicles.length === 0 ? (
+        {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🚗</div>
             <p className="text-xl text-gray-600">
@@ -225,14 +160,14 @@ const Home = () => {
               }
             </p>
             {hasFilter && (
-              <Link to="/" className="text-red-600 hover:underline mt-4 inline-block">
+              <Link to="/vehiculos" className="text-red-600 hover:underline mt-4 inline-block">
                 Ver todos los vehículos
               </Link>
             )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayVehicles.map((vehicle) => (
+            {filteredVehicles.map((vehicle) => (
               <Link
                 key={vehicle.id}
                 to={`/vehiculo/${vehicle.slug}`}
@@ -291,21 +226,9 @@ const Home = () => {
             ))}
           </div>
         )}
-
-        {/* Botón Ver todos los vehículos (solo cuando no hay filtros y hay más vehículos) */}
-        {!hasFilter && filteredVehicles.length > 6 && (
-          <div className="text-center mt-10">
-            <Link
-              to="/vehiculos"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-300"
-            >
-              Ver todos los vehículos
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   )
 }
 
-export default Home
+export default VehiclesList

@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
 const Navbar = () => {
@@ -13,6 +13,38 @@ const Navbar = () => {
   const [selectedCategory, setSelectedCategory] = useState('carro')
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Refs para los timeouts de los menús desplegables
+  const categoriesTimeoutRef = useRef(null)
+  const brandsTimeoutRef = useRef(null)
+
+  // Handlers para el menú de categorías con delay de 2 segundos
+  const handleCategoriesMouseEnter = () => {
+    if (categoriesTimeoutRef.current) {
+      clearTimeout(categoriesTimeoutRef.current)
+    }
+    setShowCategoriesMenu(true)
+  }
+
+  const handleCategoriesMouseLeave = () => {
+    categoriesTimeoutRef.current = setTimeout(() => {
+      setShowCategoriesMenu(false)
+    }, 2000)
+  }
+
+  // Handlers para el menú de marcas con delay de 2 segundos
+  const handleBrandsMouseEnter = () => {
+    if (brandsTimeoutRef.current) {
+      clearTimeout(brandsTimeoutRef.current)
+    }
+    setShowBrandsMenu(true)
+  }
+
+  const handleBrandsMouseLeave = () => {
+    brandsTimeoutRef.current = setTimeout(() => {
+      setShowBrandsMenu(false)
+    }, 2000)
+  }
 
   const handleLogout = () => {
     logout()
@@ -43,7 +75,14 @@ const Navbar = () => {
   }
 
   const handleAllVehicles = () => {
-    navigate('/')
+    navigate('/', { state: { refresh: Date.now() } })
+    setSearchQuery('')
+  }
+
+  // Navegar al inicio con refresh para mostrar vehículos aleatorios diferentes
+  const handleHomeClick = (e) => {
+    e.preventDefault()
+    navigate('/', { state: { refresh: Date.now() } })
     setSearchQuery('')
   }
 
@@ -62,7 +101,7 @@ const Navbar = () => {
         {/* Primera fila: Logo, Búsqueda y Autenticación */}
         <div className="flex justify-between items-center py-4 border-b border-gray-700">
           {/* Logo */}
-          <Link to="/" className="flex items-center hover:opacity-90 transition-opacity flex-shrink-0">
+          <a href="/" onClick={handleHomeClick} className="flex items-center hover:opacity-90 transition-opacity flex-shrink-0 cursor-pointer">
             <img
               src="/images/logo-autos-duitama.png"
               alt="Autos Duitama"
@@ -75,7 +114,7 @@ const Navbar = () => {
             <span className="text-xl md:text-2xl font-bold hidden items-center gap-2">
               🚗 <span>Autos Duitama</span>
             </span>
-          </Link>
+          </a>
 
           {/* Barra de Búsqueda - Oculta en móvil */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4 lg:mx-12">
@@ -154,15 +193,15 @@ const Navbar = () => {
 
         {/* Segunda fila: Navegación Desktop */}
         <div className="hidden md:flex items-center gap-8 lg:gap-14 xl:gap-16 py-3">
-            <Link to="/" className="hover:text-red-400 transition-colors font-medium">
+            <a href="/" onClick={handleHomeClick} className="hover:text-red-400 transition-colors font-medium cursor-pointer">
               Inicio
-            </Link>
+            </a>
 
             {/* Dropdown de Categorías */}
             <div
               className="relative"
-              onMouseEnter={() => setShowCategoriesMenu(true)}
-              onMouseLeave={() => setShowCategoriesMenu(false)}
+              onMouseEnter={handleCategoriesMouseEnter}
+              onMouseLeave={handleCategoriesMouseLeave}
             >
               <button
                 className="hover:text-red-400 transition-colors font-medium flex items-center gap-1"
@@ -186,7 +225,7 @@ const Navbar = () => {
                     onClick={() => handleCategoryClick('carro')}
                     className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors"
                   >
-                    🚗 Carros
+                    🚗 Carros y Camionetas
                   </button>
                   <button
                     onClick={() => handleCategoryClick('moto')}
@@ -213,8 +252,8 @@ const Navbar = () => {
             {/* Dropdown de Marcas */}
             <div
               className="relative"
-              onMouseEnter={() => setShowBrandsMenu(true)}
-              onMouseLeave={() => setShowBrandsMenu(false)}
+              onMouseEnter={handleBrandsMouseEnter}
+              onMouseLeave={handleBrandsMouseLeave}
             >
               <button
                 className="hover:text-red-400 transition-colors font-medium flex items-center gap-1"
@@ -235,7 +274,7 @@ const Navbar = () => {
                   </button>
                   <div className="border-t border-gray-200 my-2"></div>
                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
-                    {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
+                    {selectedCategory === 'carro' ? 'Carros y Camionetas' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
                   </div>
                   {brands.map((brand) => (
                     <button
@@ -274,13 +313,13 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-700">
             <div className="py-2 space-y-1">
-              <Link
-                to="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 hover:bg-gray-800 transition-colors"
+              <a
+                href="/"
+                onClick={(e) => { handleHomeClick(e); setIsMobileMenuOpen(false); }}
+                className="block px-4 py-3 hover:bg-gray-800 transition-colors cursor-pointer"
               >
                 Inicio
-              </Link>
+              </a>
 
               {/* Categorías Móvil */}
               <div className="border-t border-gray-700">
@@ -305,7 +344,7 @@ const Navbar = () => {
                       onClick={() => { handleCategoryClick('carro'); setIsMobileMenuOpen(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
-                      🚗 Carros
+                      🚗 Carros y Camionetas
                     </button>
                     <button
                       onClick={() => { handleCategoryClick('moto'); setIsMobileMenuOpen(false); }}
@@ -349,7 +388,7 @@ const Navbar = () => {
                       Todas las marcas
                     </button>
                     <div className="px-8 py-2 text-xs font-semibold text-gray-400 uppercase">
-                      {selectedCategory === 'carro' ? 'Carros' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
+                      {selectedCategory === 'carro' ? 'Carros y Camionetas' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
                     </div>
                     {brands.map((brand) => (
                       <button
