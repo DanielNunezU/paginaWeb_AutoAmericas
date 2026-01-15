@@ -72,6 +72,7 @@ app.get('/api', (req, res) => {
 
 // Servir frontend siempre (busca en varias ubicaciones)
 const possibleFrontendPaths = [
+  path.join(__dirname, 'public'),
   path.join(__dirname, '../frontend/dist'),
   path.join(__dirname, '../../frontend/dist'),
   path.join(__dirname, '../dist')
