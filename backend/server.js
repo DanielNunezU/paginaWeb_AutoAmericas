@@ -53,13 +53,13 @@ const createDefaultAdmin = () => {
 // Esperar a que las tablas se creen antes de crear el admin
 setTimeout(createDefaultAdmin, 1000);
 
-// Rutas
+// Rutas API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vehicles', require('./routes/vehicles'));
 app.use('/api/brands', require('./routes/brands'));
 
-// Ruta de bienvenida
-app.get('/', (req, res) => {
+// Ruta de info de la API
+app.get('/api', (req, res) => {
   res.json({
     message: 'API de AutoAmericas - Compraventa de Vehículos',
     version: '1.0.0',
@@ -70,9 +70,11 @@ app.get('/', (req, res) => {
   });
 });
 
-// Servir frontend en producción
-if (isProduction) {
-  const frontendPath = path.join(__dirname, '../frontend/dist');
+// Servir frontend desde backend/public
+const fs = require('fs');
+const frontendPath = path.join(__dirname, 'public');
+
+if (fs.existsSync(path.join(frontendPath, 'index.html'))) {
   app.use(express.static(frontendPath));
 
   // Todas las rutas no-API van al frontend (SPA)
