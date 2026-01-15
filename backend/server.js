@@ -81,6 +81,26 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Crear usuarios adicionales
+app.get('/api/debug/create-users', (req, res) => {
+  const user1Pass = bcrypt.hashSync('adminAut123', 10);
+  const user2Pass = bcrypt.hashSync('adminAut223', 10);
+
+  db.run('INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+    ['userAut1', user1Pass, 'admin'], function(err1) {
+      db.run('INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+        ['userAut2', user2Pass, 'admin'], function(err2) {
+          res.json({
+            success: true,
+            users: [
+              { username: 'userAut1', password: 'adminAut123', error: err1?.message },
+              { username: 'userAut2', password: 'adminAut223', error: err2?.message }
+            ]
+          });
+        });
+    });
+});
+
 // Ruta de debug temporal - VER USUARIOS EN LA BASE DE DATOS
 app.get('/api/debug/users', (req, res) => {
   const dbPath = require('path').join(__dirname, 'autoamericas.db');
