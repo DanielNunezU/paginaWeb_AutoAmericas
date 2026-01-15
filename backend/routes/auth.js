@@ -29,9 +29,10 @@ router.post('/login', (req, res) => {
         return res.status(401).json({ message: 'Credenciales inválidas' });
       }
 
+      const jwtSecret = process.env.JWT_SECRET || 'secreto_default_autosduitama_2024';
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }
       );
 
@@ -60,7 +61,8 @@ router.get('/verify', (req, res) => {
       return res.status(401).json({ valid: false });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = process.env.JWT_SECRET || 'secreto_default_autosduitama_2024';
+    const decoded = jwt.verify(token, jwtSecret);
     res.json({ valid: true, user: decoded });
   } catch (error) {
     res.status(401).json({ valid: false });

@@ -97,29 +97,42 @@ app.get('/api/debug/users', (req, res) => {
 
 // Ruta para probar login directamente
 app.get('/api/debug/test-login', (req, res) => {
+  const jwt = require('jsonwebtoken');
   const testUser = 'adminAut';
   const testPass = 'admin123';
 
-  // Mostrar ruta de la base de datos que usa database.js
-  const configDbPath = path.join(__dirname, 'config', '..', 'autoamericas.db');
-  const serverDbPath = path.join(__dirname, 'autoamericas.db');
-
   db.get('SELECT * FROM users WHERE username = ?', [testUser], (err, user) => {
     if (err) {
-      return res.json({ step: 'query', error: err.message, configDbPath, serverDbPath });
+      return res.json({ step: 'query', error: err.message });
     }
     if (!user) {
-      return res.json({ step: 'user', error: 'Usuario no encontrado', configDbPath, serverDbPath, dirname: __dirname });
+      return res.json({ step: 'user', error: 'Usuario no encontrado' });
     }
 
     const isValid = bcrypt.compareSync(testPass, user.password);
-    res.json({
-      userFound: true,
-      username: user.username,
-      role: user.role,
-      passwordMatch: isValid,
-      storedHash: user.password.substring(0, 20) + '...'
-    });
+
+    if (!isValid) {
+      return res.json({ step: 'password', error: 'Contraseña incorrecta' });
+    }
+
+    // Intentar crear token
+    try {
+      const jwtSecret = process.env.JWT_SECRET || 'secreto_default_autosduitama_2024';
+      const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role },
+        jwtSecret,
+        { expiresIn: '7d' }
+      );
+
+      res.json({
+        success: true,
+        token: token,
+        user: { id: user.id, username: user.username, role: user.role },
+        jwtSecretExists: !!process.env.JWT_SECRET
+      });
+    } catch (tokenError) {
+      res.json({ step: 'token', error: tokenError.message });
+    }
   });
 });
 
