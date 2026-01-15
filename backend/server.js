@@ -23,36 +23,46 @@ app.use(express.urlencoded({ extended: true }));
 // Servir archivos estáticos (imágenes)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Crear o actualizar usuario admin
+// Crear usuario admin al iniciar
 const createDefaultAdmin = () => {
-  // Credenciales fijas para Hostinger
   const adminUser = 'adminAut';
   const adminPass = 'admin123';
   const hashedPassword = bcrypt.hashSync(adminPass, 10);
 
-  // Primero eliminar cualquier admin existente y crear uno nuevo
-  db.run('DELETE FROM users WHERE role = ?', ['admin'], (err) => {
+  // Verificar si existe y crear
+  db.get('SELECT id FROM users WHERE username = ?', [adminUser], (err, row) => {
     if (err) {
-      console.error('Error al limpiar admin:', err);
+      console.error('Error verificando admin:', err);
+      return;
     }
 
-    db.run(
-      'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
-      [adminUser, hashedPassword, 'admin'],
-      (err) => {
-        if (err) {
-          console.error('Error al crear admin:', err);
-        } else {
-          console.log('✅ Usuario administrador configurado');
-          console.log(`   Usuario: ${adminUser}`);
+    if (!row) {
+      db.run(
+        'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+        [adminUser, hashedPassword, 'admin'],
+        function(err) {
+          if (err) {
+            console.error('Error al crear admin:', err);
+          } else {
+            console.log('✅ Admin creado con ID:', this.lastID);
+          }
         }
-      }
-    );
+      );
+    } else {
+      // Actualizar contraseña
+      db.run('UPDATE users SET password = ? WHERE username = ?', [hashedPassword, adminUser], (err) => {
+        if (err) {
+          console.error('Error actualizando admin:', err);
+        } else {
+          console.log('✅ Admin actualizado');
+        }
+      });
+    }
   });
 };
 
-// Esperar a que las tablas se creen antes de crear el admin
-setTimeout(createDefaultAdmin, 1000);
+// Esperar más tiempo a que las tablas se creen
+setTimeout(createDefaultAdmin, 3000);
 
 // Rutas API
 app.use('/api/auth', require('./routes/auth'));
@@ -79,6 +89,24 @@ app.get('/api/debug/users', (req, res) => {
     }
     res.json({ users: users || [], count: users ? users.length : 0 });
   });
+});
+
+// Ruta para crear admin manualmente
+app.get('/api/debug/create-admin', (req, res) => {
+  const adminUser = 'adminAut';
+  const adminPass = 'admin123';
+  const hashedPassword = bcrypt.hashSync(adminPass, 10);
+
+  db.run(
+    'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+    [adminUser, hashedPassword, 'admin'],
+    function(err) {
+      if (err) {
+        return res.json({ error: err.message });
+      }
+      res.json({ success: true, message: 'Admin creado', id: this.lastID, username: adminUser, password: adminPass });
+    }
+  );
 });
 
 // Servir frontend desde backend/public
