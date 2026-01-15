@@ -1,0 +1,43 @@
+# AutosDuitama - Configuracion de servidor
+# Subir este archivo a la raiz de public_html en Hostinger
+
+RewriteEngine On
+
+# Forzar HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirigir la raiz al frontend
+RewriteRule ^$ /frontend/dist/index.html [L]
+
+# Redirigir assets y archivos estaticos del frontend
+RewriteRule ^assets/(.*)$ /frontend/dist/assets/$1 [L]
+RewriteRule ^images/(.*)$ /frontend/dist/images/$1 [L]
+
+# Redirigir peticiones de API al backend Node.js
+RewriteRule ^api/(.*)$ http://localhost:5000/api/$1 [P,L]
+
+# Redirigir uploads al backend
+RewriteRule ^uploads/(.*)$ http://localhost:5000/uploads/$1 [P,L]
+
+# Configuracion de cache para archivos estaticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Compresion GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# SPA - Redirigir todas las rutas al index.html del frontend
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/frontend/
+RewriteCond %{REQUEST_URI} !^/backend/
+RewriteRule ^(.*)$ /frontend/dist/index.html [L]
