@@ -95,6 +95,30 @@ app.get('/api/debug/users', (req, res) => {
   });
 });
 
+// Ruta para probar login directamente
+app.get('/api/debug/test-login', (req, res) => {
+  const testUser = 'adminAut';
+  const testPass = 'admin123';
+
+  db.get('SELECT * FROM users WHERE username = ?', [testUser], (err, user) => {
+    if (err) {
+      return res.json({ step: 'query', error: err.message });
+    }
+    if (!user) {
+      return res.json({ step: 'user', error: 'Usuario no encontrado' });
+    }
+
+    const isValid = bcrypt.compareSync(testPass, user.password);
+    res.json({
+      userFound: true,
+      username: user.username,
+      role: user.role,
+      passwordMatch: isValid,
+      storedHash: user.password.substring(0, 20) + '...'
+    });
+  });
+});
+
 // Ruta para crear admin manualmente
 app.get('/api/debug/create-admin', (req, res) => {
   const adminUser = 'adminAut';
