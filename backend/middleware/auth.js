@@ -8,7 +8,8 @@ const authMiddleware = (req, res, next) => {
       return res.status(401).json({ message: 'Token no proporcionado' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = process.env.JWT_SECRET || 'secreto_default_autosduitama_2024';
+    const decoded = jwt.verify(token, jwtSecret);
     req.user = decoded;
     next();
   } catch (error) {
