@@ -25,8 +25,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Crear o actualizar usuario admin
 const createDefaultAdmin = () => {
-  const adminUser = process.env.ADMIN_USERNAME || 'admin';
-  const adminPass = process.env.ADMIN_PASSWORD || 'admin123';
+  // Credenciales fijas para Hostinger
+  const adminUser = 'adminAut';
+  const adminPass = 'admin123';
   const hashedPassword = bcrypt.hashSync(adminPass, 10);
 
   // Primero eliminar cualquier admin existente y crear uno nuevo
