@@ -54,7 +54,7 @@ const VehicleDetail = () => {
   // Función para obtener un asesor aleatorio y abrir WhatsApp
   const handleWhatsAppClick = () => {
     const asesorAleatorio = asesores[Math.floor(Math.random() * asesores.length)]
-    const mensaje = encodeURIComponent(`Hola, estoy interesado en el vehículo: ${vehicle?.title || 'vehículo'}`)
+    const mensaje = encodeURIComponent(`Hola, estoy interesado en el vehículo: ${vehicle?.title || 'vehículo'}. Lo vi publicado en la página de autosduitama.com`)
     const url = `https://api.whatsapp.com/send?phone=${asesorAleatorio}&text=${mensaje}`
     window.open(url, '_blank')
   }
