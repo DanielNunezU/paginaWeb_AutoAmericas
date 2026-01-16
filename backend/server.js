@@ -181,6 +181,56 @@ app.get('/api/debug/uploads', (req, res) => {
   }
 });
 
+// Ruta para limpiar imágenes huérfanas (que no existen en disco)
+app.get('/api/debug/clean-images', (req, res) => {
+  const uploadsPath = path.join(__dirname, 'uploads');
+  const fs = require('fs');
+
+  try {
+    // Obtener archivos reales en disco
+    const existingFiles = fs.existsSync(uploadsPath) ? fs.readdirSync(uploadsPath) : [];
+    const existingFilesSet = new Set(existingFiles.map(f => `/uploads/${f}`));
+
+    // Obtener todas las imágenes de la base de datos
+    db.all('SELECT id, vehicle_id, image_url FROM vehicle_images', (err, dbImages) => {
+      if (err) {
+        return res.json({ error: err.message });
+      }
+
+      // Encontrar imágenes huérfanas (en DB pero no en disco)
+      const orphanImages = dbImages.filter(img => !existingFilesSet.has(img.image_url));
+
+      if (orphanImages.length === 0) {
+        return res.json({
+          message: 'No hay imágenes huérfanas para eliminar',
+          totalInDb: dbImages.length,
+          totalInDisk: existingFiles.length
+        });
+      }
+
+      // Eliminar imágenes huérfanas de la base de datos
+      const orphanIds = orphanImages.map(img => img.id);
+      const placeholders = orphanIds.map(() => '?').join(',');
+
+      db.run(`DELETE FROM vehicle_images WHERE id IN (${placeholders})`, orphanIds, function(err) {
+        if (err) {
+          return res.json({ error: err.message });
+        }
+
+        res.json({
+          message: 'Imágenes huérfanas eliminadas',
+          deletedCount: this.changes || orphanImages.length,
+          deletedImages: orphanImages.map(img => img.image_url),
+          remainingInDb: dbImages.length - orphanImages.length,
+          totalInDisk: existingFiles.length
+        });
+      });
+    });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
 // Ruta para crear admins manualmente
 app.get('/api/debug/create-admin', (req, res) => {
   const users = [
