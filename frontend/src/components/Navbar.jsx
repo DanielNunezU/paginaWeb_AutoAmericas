@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const Navbar = () => {
@@ -14,36 +14,24 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Refs para los timeouts de los menús desplegables
-  const categoriesTimeoutRef = useRef(null)
-  const brandsTimeoutRef = useRef(null)
-
-  // Handlers para el menú de categorías con delay de 2 segundos
-  const handleCategoriesMouseEnter = () => {
-    if (categoriesTimeoutRef.current) {
-      clearTimeout(categoriesTimeoutRef.current)
-    }
-    setShowCategoriesMenu(true)
+  // Handlers para el menú de categorías - click para abrir, mouse leave para cerrar
+  const handleCategoriesClick = () => {
+    setShowCategoriesMenu(!showCategoriesMenu)
+    setShowBrandsMenu(false) // Cerrar el otro menú
   }
 
   const handleCategoriesMouseLeave = () => {
-    categoriesTimeoutRef.current = setTimeout(() => {
-      setShowCategoriesMenu(false)
-    }, 2000)
+    setShowCategoriesMenu(false)
   }
 
-  // Handlers para el menú de marcas con delay de 2 segundos
-  const handleBrandsMouseEnter = () => {
-    if (brandsTimeoutRef.current) {
-      clearTimeout(brandsTimeoutRef.current)
-    }
-    setShowBrandsMenu(true)
+  // Handlers para el menú de marcas - click para abrir, mouse leave para cerrar
+  const handleBrandsClick = () => {
+    setShowBrandsMenu(!showBrandsMenu)
+    setShowCategoriesMenu(false) // Cerrar el otro menú
   }
 
   const handleBrandsMouseLeave = () => {
-    brandsTimeoutRef.current = setTimeout(() => {
-      setShowBrandsMenu(false)
-    }, 2000)
+    setShowBrandsMenu(false)
   }
 
   const handleLogout = () => {
@@ -200,10 +188,10 @@ const Navbar = () => {
             {/* Dropdown de Categorías */}
             <div
               className="relative"
-              onMouseEnter={handleCategoriesMouseEnter}
               onMouseLeave={handleCategoriesMouseLeave}
             >
               <button
+                onClick={handleCategoriesClick}
                 className="hover:text-red-400 transition-colors font-medium flex items-center gap-1"
               >
                 Categorías
@@ -252,10 +240,10 @@ const Navbar = () => {
             {/* Dropdown de Marcas */}
             <div
               className="relative"
-              onMouseEnter={handleBrandsMouseEnter}
               onMouseLeave={handleBrandsMouseLeave}
             >
               <button
+                onClick={handleBrandsClick}
                 className="hover:text-red-400 transition-colors font-medium flex items-center gap-1"
               >
                 Marcas
