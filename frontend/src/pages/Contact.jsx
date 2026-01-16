@@ -16,7 +16,7 @@ const Contact = () => {
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Información de Contacto</h2>
 
             <div className="space-y-6">
-              {/* Teléfono */}
+              {/* Teléfonos de Asesores */}
               <div className="flex items-start gap-4">
                 <div className="bg-blue-100 p-3 rounded-lg">
                   <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,10 +24,33 @@ const Contact = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Teléfono</h3>
-                  <a href="tel:+573112371347" className="text-blue-600 hover:underline">
-                    +57 311 2371347
-                  </a>
+                  <h3 className="font-semibold text-gray-800 mb-2">Teléfonos</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 1:</span>
+                      <a href="tel:+573133490087" className="text-blue-600 hover:underline">313 349 0087</a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 2:</span>
+                      <a href="tel:+573209669384" className="text-blue-600 hover:underline">320 966 9384</a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 3:</span>
+                      <a href="tel:+573106440913" className="text-blue-600 hover:underline">310 644 0913</a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 4:</span>
+                      <a href="tel:+573144018594" className="text-blue-600 hover:underline">314 401 8594</a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 5:</span>
+                      <a href="tel:+573133473617" className="text-blue-600 hover:underline">313 347 3617</a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 6:</span>
+                      <a href="tel:+573203866321" className="text-blue-600 hover:underline">320 386 6321</a>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -39,15 +62,75 @@ const Contact = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">WhatsApp</h3>
-                  <a
-                    href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%20Auto%20Americas%20Motors%2C%20estoy%20interesad%40%20en%20un%20veh%C3%ADculo..."
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-600 hover:underline"
-                  >
-                    +57 311 2371347
-                  </a>
+                  <h3 className="font-semibold text-gray-800 mb-2">WhatsApp</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 1:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573133490087&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        313 349 0087
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 2:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573209669384&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        320 966 9384
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 3:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573106440913&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        310 644 0913
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 4:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573144018594&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        314 401 8594
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 5:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573133473617&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        313 347 3617
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 6:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573203866321&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        320 386 6321
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
 
