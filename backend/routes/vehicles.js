@@ -75,7 +75,7 @@ router.get('/', (req, res) => {
     if (status === 'all') {
       query = `
         SELECT v.*,
-               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id AND is_primary = 1 LIMIT 1) as primary_image
+               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id ORDER BY is_primary DESC, id ASC LIMIT 1) as primary_image
         FROM vehicles v
         ORDER BY v.created_at DESC
       `;
@@ -83,7 +83,7 @@ router.get('/', (req, res) => {
     } else {
       query = `
         SELECT v.*,
-               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id AND is_primary = 1 LIMIT 1) as primary_image
+               (SELECT image_url FROM vehicle_images WHERE vehicle_id = v.id ORDER BY is_primary DESC, id ASC LIMIT 1) as primary_image
         FROM vehicles v
         WHERE v.status = ?
         ORDER BY v.created_at DESC
