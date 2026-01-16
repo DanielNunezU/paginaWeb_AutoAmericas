@@ -226,7 +226,7 @@ const Home = () => {
               onChange={(e) => setSortOrder(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
             >
-              <option value="default">Ordenar por</option>
+              <option value="default">Ordenar por precio</option>
               <option value="price_asc">Menor a mayor precio</option>
               <option value="price_desc">Mayor a menor precio</option>
             </select>
