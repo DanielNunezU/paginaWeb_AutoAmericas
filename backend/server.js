@@ -152,6 +152,35 @@ app.get('/api/debug/test-login', (req, res) => {
   });
 });
 
+// Ruta para verificar imágenes y uploads
+app.get('/api/debug/uploads', (req, res) => {
+  const uploadsPath = path.join(__dirname, 'uploads');
+  const fs = require('fs');
+
+  try {
+    const exists = fs.existsSync(uploadsPath);
+    let files = [];
+
+    if (exists) {
+      files = fs.readdirSync(uploadsPath);
+    }
+
+    // También obtener las URLs de imágenes de la base de datos
+    db.all('SELECT id, vehicle_id, image_url FROM vehicle_images LIMIT 10', (err, dbImages) => {
+      res.json({
+        uploadsPath: uploadsPath,
+        folderExists: exists,
+        fileCount: files.length,
+        files: files.slice(0, 10),
+        dbImages: dbImages || [],
+        dbError: err?.message
+      });
+    });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
 // Ruta para crear admins manualmente
 app.get('/api/debug/create-admin', (req, res) => {
   const users = [
