@@ -1,217 +1,196 @@
-const sqlite3 = require('sqlite3').verbose();
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
-const path = require('path');
 
-const dbPath = path.join(__dirname, '../autoamericas.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Error al conectar con la base de datos:', err);
-  } else {
-    console.log('✅ Conectado a la base de datos SQLite');
-  }
-});
+// Configuración de la conexión MySQL
+const dbConfig = {
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'autoamericas',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+};
 
-// Habilitar foreign keys
-db.run('PRAGMA foreign_keys = ON');
+// Crear pool de conexiones
+const pool = mysql.createPool(dbConfig);
 
-// Migrar tabla brands para permitir marcas repetidas en diferentes categorías
-const migrateBrandsTable = () => {
-  // Verificar si necesitamos migrar (si existe índice único solo en name)
-  db.all("PRAGMA index_list('brands')", (err, indexes) => {
-    if (err) return;
-
-    // Buscar si hay un índice único solo en 'name'
-    const needsMigration = indexes.some(idx =>
-      idx.unique === 1 && idx.name === 'sqlite_autoindex_brands_1'
-    );
-
-    if (needsMigration) {
-      console.log('Migrando tabla brands para permitir marcas en múltiples categorías...');
-
-      db.serialize(() => {
-        // Crear tabla temporal con nueva estructura
-        db.run(`
-          CREATE TABLE IF NOT EXISTS brands_new (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(name, category)
-          )
-        `);
-
-        // Copiar datos existentes
-        db.run(`INSERT OR IGNORE INTO brands_new (id, name, category, created_at) SELECT id, name, category, created_at FROM brands`);
-
-        // Eliminar tabla vieja
-        db.run(`DROP TABLE brands`);
-
-        // Renombrar tabla nueva
-        db.run(`ALTER TABLE brands_new RENAME TO brands`, (err) => {
-          if (!err) {
-            console.log('✅ Migración de tabla brands completada');
-          }
-        });
-      });
+// Wrapper para compatibilidad con el código existente (estilo callback)
+const db = {
+  // Ejecutar query que retorna múltiples filas
+  all: (query, params, callback) => {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
     }
-  });
+    pool.execute(query, params)
+      .then(([rows]) => callback(null, rows))
+      .catch(err => callback(err));
+  },
+
+  // Ejecutar query que retorna una sola fila
+  get: (query, params, callback) => {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
+    }
+    pool.execute(query, params)
+      .then(([rows]) => callback(null, rows[0]))
+      .catch(err => callback(err));
+  },
+
+  // Ejecutar query de modificación (INSERT, UPDATE, DELETE)
+  run: function(query, params, callback) {
+    if (typeof params === 'function') {
+      callback = params;
+      params = [];
+    }
+    pool.execute(query, params)
+      .then(([result]) => {
+        // Simular el contexto de SQLite con this.lastID
+        if (callback) {
+          callback.call({ lastID: result.insertId, changes: result.affectedRows }, null);
+        }
+      })
+      .catch(err => {
+        if (callback) callback(err);
+      });
+  },
+
+  // Preparar statement (para inserciones múltiples)
+  prepare: (query) => {
+    return {
+      run: (params, callback) => {
+        pool.execute(query, params)
+          .then(([result]) => {
+            if (callback) callback.call({ lastID: result.insertId }, null);
+          })
+          .catch(err => {
+            if (callback) callback(err);
+          });
+      },
+      finalize: (callback) => {
+        if (callback) callback();
+      }
+    };
+  },
+
+  // Ejecutar queries en serie
+  serialize: (callback) => {
+    callback();
+  }
+};
+
+// Crear tablas si no existen
+const createTables = async () => {
+  try {
+    const connection = await pool.getConnection();
+
+    // Tabla de usuarios (administradores)
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'admin',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Tabla de vehículos
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS vehicles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        slug VARCHAR(255) UNIQUE NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        brand VARCHAR(255) NOT NULL,
+        model VARCHAR(255) NOT NULL,
+        year INT NOT NULL,
+        price DECIMAL(15,2) NOT NULL,
+        mileage INT,
+        fuel_type VARCHAR(100),
+        transmission VARCHAR(100),
+        color VARCHAR(100),
+        description TEXT,
+        features TEXT,
+        category VARCHAR(50) DEFAULT 'carro',
+        status VARCHAR(50) DEFAULT 'available',
+        load_capacity VARCHAR(100),
+        engine VARCHAR(100),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Tabla de imágenes de vehículos
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS vehicle_images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        vehicle_id INT NOT NULL,
+        image_url VARCHAR(500) NOT NULL,
+        is_primary TINYINT DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Tabla de marcas
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS brands (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        category VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_brand_category (name, category)
+      )
+    `);
+
+    console.log('✅ Tablas de base de datos MySQL creadas correctamente');
+
+    // Inicializar datos por defecto
+    await initializeDefaultUsers(connection);
+    await initializeDefaultBrands(connection);
+
+    connection.release();
+  } catch (error) {
+    console.error('Error al crear tablas:', error);
+  }
 };
 
 // Inicializar usuarios colaboradores por defecto
-const initializeDefaultUsers = () => {
+const initializeDefaultUsers = async (connection) => {
   const defaultUsers = [
     { username: 'ColabPri126', password: 'AutDuit126', role: 'colaborador_primario' },
     { username: 'ColabSec226', password: 'AutDuit226', role: 'colaborador_secundario' },
     { username: 'ColabTer326', password: 'AutDuit326', role: 'colaborador_terciario' }
   ];
 
-  defaultUsers.forEach(user => {
-    const hashedPassword = bcrypt.hashSync(user.password, 10);
+  for (const user of defaultUsers) {
+    try {
+      const hashedPassword = bcrypt.hashSync(user.password, 10);
+      const [existing] = await connection.execute('SELECT id FROM users WHERE username = ?', [user.username]);
 
-    db.get('SELECT id FROM users WHERE username = ?', [user.username], (err, row) => {
-      if (err) {
-        console.error('Error al verificar usuario:', err);
-        return;
-      }
-
-      if (row) {
-        // Actualizar contraseña si el usuario ya existe
-        db.run(
+      if (existing.length > 0) {
+        await connection.execute(
           'UPDATE users SET password = ?, role = ? WHERE username = ?',
-          [hashedPassword, user.role, user.username],
-          (err) => {
-            if (err) {
-              console.error(`Error al actualizar usuario ${user.username}:`, err);
-            } else {
-              console.log(`✅ Usuario ${user.username} actualizado`);
-            }
-          }
+          [hashedPassword, user.role, user.username]
         );
+        console.log(`✅ Usuario ${user.username} actualizado`);
       } else {
-        // Crear usuario si no existe
-        db.run(
+        await connection.execute(
           'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
-          [user.username, hashedPassword, user.role],
-          (err) => {
-            if (err) {
-              console.error(`Error al crear usuario ${user.username}:`, err);
-            } else {
-              console.log(`✅ Usuario ${user.username} creado`);
-            }
-          }
+          [user.username, hashedPassword, user.role]
         );
+        console.log(`✅ Usuario ${user.username} creado`);
       }
-    });
-  });
-};
-
-// Crear tablas si no existen
-const createTables = () => {
-  // Tabla de usuarios (administradores)
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      role TEXT DEFAULT 'admin',
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `, (err) => {
-    if (err) {
-      console.error('Error al crear tabla users:', err);
-    } else {
-      // Inicializar usuarios colaboradores por defecto
-      initializeDefaultUsers();
+    } catch (error) {
+      console.error(`Error con usuario ${user.username}:`, error.message);
     }
-  });
-
-  // Tabla de vehículos
-  db.run(`
-    CREATE TABLE IF NOT EXISTS vehicles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      slug TEXT UNIQUE NOT NULL,
-      title TEXT NOT NULL,
-      brand TEXT NOT NULL,
-      model TEXT NOT NULL,
-      year INTEGER NOT NULL,
-      price REAL NOT NULL,
-      mileage INTEGER,
-      fuel_type TEXT,
-      transmission TEXT,
-      color TEXT,
-      description TEXT,
-      features TEXT,
-      category TEXT DEFAULT 'carro',
-      status TEXT DEFAULT 'available',
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `, (err) => {
-    if (err) {
-      console.error('Error al crear tabla vehicles:', err);
-    } else {
-      // Agregar columna category si no existe (para DBs existentes)
-      db.run(`ALTER TABLE vehicles ADD COLUMN category TEXT DEFAULT 'carro'`, (err) => {
-        if (err && !err.message.includes('duplicate column')) {
-          console.error('Error al agregar columna category:', err);
-        }
-      });
-      // Agregar columna load_capacity si no existe (para carga pesada y maquinaria)
-      db.run(`ALTER TABLE vehicles ADD COLUMN load_capacity TEXT`, (err) => {
-        if (err && !err.message.includes('duplicate column')) {
-          console.error('Error al agregar columna load_capacity:', err);
-        }
-      });
-      // Agregar columna engine si no existe
-      db.run(`ALTER TABLE vehicles ADD COLUMN engine TEXT`, (err) => {
-        if (err && !err.message.includes('duplicate column')) {
-          console.error('Error al agregar columna engine:', err);
-        }
-      });
-    }
-  });
-
-  // Tabla de imágenes de vehículos
-  db.run(`
-    CREATE TABLE IF NOT EXISTS vehicle_images (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      vehicle_id INTEGER NOT NULL,
-      image_url TEXT NOT NULL,
-      is_primary INTEGER DEFAULT 0,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
-    )
-  `, (err) => {
-    if (err) {
-      console.error('Error al crear tabla vehicle_images:', err);
-    } else {
-      console.log('✅ Tablas de base de datos creadas correctamente');
-    }
-  });
-
-  // Tabla de marcas personalizadas (permite misma marca en diferentes categorías)
-  db.run(`
-    CREATE TABLE IF NOT EXISTS brands (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(name, category)
-    )
-  `, (err) => {
-    if (err) {
-      console.error('Error al crear tabla brands:', err);
-    } else {
-      // Migrar bases de datos existentes: remover restricción UNIQUE solo en name
-      migrateBrandsTable();
-      // Inicializar marcas por defecto
-      initializeDefaultBrands();
-    }
-  });
+  }
 };
 
 // Inicializar marcas por defecto
-const initializeDefaultBrands = () => {
+const initializeDefaultBrands = async (connection) => {
   const defaultBrands = {
     carro: ['Toyota', 'Chevrolet', 'Mazda', 'Nissan', 'Hyundai', 'Kia', 'Ford', 'Honda', 'Renault', 'Volkswagen', 'Mercedes-Benz', 'BMW', 'Audi', 'Suzuki', 'Mitsubishi', 'Jeep', 'Peugeot', 'Fiat', 'Subaru', 'Volvo'],
     moto: ['Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'Harley-Davidson', 'Ducati', 'KTM', 'BMW', 'Triumph', 'Royal Enfield'],
@@ -219,29 +198,47 @@ const initializeDefaultBrands = () => {
     maquinaria: ['Caterpillar', 'Komatsu', 'John Deere', 'Volvo', 'JCB', 'Case', 'Hitachi', 'Liebherr', 'Doosan', 'Hyundai', 'Bobcat', 'New Holland', 'Kobelco', 'XCMG', 'Sany']
   };
 
-  db.get('SELECT COUNT(*) as count FROM brands', (err, row) => {
-    if (err) {
-      console.error('Error al verificar marcas:', err);
-      return;
+  try {
+    const [rows] = await connection.execute('SELECT COUNT(*) as count FROM brands');
+
+    if (rows[0].count === 0) {
+      for (const [category, brands] of Object.entries(defaultBrands)) {
+        for (const brand of brands) {
+          try {
+            await connection.execute(
+              'INSERT IGNORE INTO brands (name, category) VALUES (?, ?)',
+              [brand, category]
+            );
+          } catch (err) {
+            // Ignorar errores de duplicados
+          }
+        }
+      }
+      console.log('✅ Marcas por defecto inicializadas');
     }
-
-    // Solo inicializar si no hay marcas
-    if (row.count === 0) {
-      const stmt = db.prepare('INSERT OR IGNORE INTO brands (name, category) VALUES (?, ?)');
-
-      Object.entries(defaultBrands).forEach(([category, brands]) => {
-        brands.forEach(brand => {
-          stmt.run(brand, category);
-        });
-      });
-
-      stmt.finalize(() => {
-        console.log('✅ Marcas por defecto inicializadas');
-      });
-    }
-  });
+  } catch (error) {
+    console.error('Error al inicializar marcas:', error.message);
+  }
 };
 
-createTables();
+// Inicializar conexión y tablas
+const initDatabase = async () => {
+  try {
+    // Probar conexión
+    const connection = await pool.getConnection();
+    console.log('✅ Conectado a la base de datos MySQL');
+    connection.release();
+
+    // Crear tablas
+    await createTables();
+  } catch (error) {
+    console.error('❌ Error al conectar con MySQL:', error.message);
+    console.log('\n⚠️  Asegúrate de configurar las variables de entorno:');
+    console.log('   DB_HOST, DB_USER, DB_PASSWORD, DB_NAME\n');
+  }
+};
+
+// Inicializar al cargar el módulo
+initDatabase();
 
 module.exports = db;

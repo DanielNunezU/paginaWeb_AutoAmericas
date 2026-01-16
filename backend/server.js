@@ -86,9 +86,9 @@ app.get('/api/debug/create-users', (req, res) => {
   const user1Pass = bcrypt.hashSync('adminAut123', 10);
   const user2Pass = bcrypt.hashSync('adminAut223', 10);
 
-  db.run('INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+  db.run('INSERT INTO users (username, password, role) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role = VALUES(role)',
     ['userAut1', user1Pass, 'admin'], function(err1) {
-      db.run('INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
+      db.run('INSERT INTO users (username, password, role) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role = VALUES(role)',
         ['userAut2', user2Pass, 'admin'], function(err2) {
           res.json({
             success: true,
@@ -103,15 +103,11 @@ app.get('/api/debug/create-users', (req, res) => {
 
 // Ruta de debug temporal - VER USUARIOS EN LA BASE DE DATOS
 app.get('/api/debug/users', (req, res) => {
-  const dbPath = require('path').join(__dirname, 'autoamericas.db');
-  const fs = require('fs');
-  const dbExists = fs.existsSync(dbPath);
-
   db.all('SELECT id, username, role FROM users', (err, users) => {
     if (err) {
-      return res.json({ error: err.message, dbPath, dbExists });
+      return res.json({ error: err.message, database: 'MySQL' });
     }
-    res.json({ users: users || [], count: users ? users.length : 0, dbPath, dbExists });
+    res.json({ users: users || [], count: users ? users.length : 0, database: 'MySQL' });
   });
 });
 
@@ -164,37 +160,24 @@ app.get('/api/debug/create-admin', (req, res) => {
     { username: 'userAut2', password: 'adminAut223', role: 'admin' }
   ];
 
-  // Crear tabla si no existe
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT DEFAULT 'admin',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`, (err) => {
-    if (err) {
-      return res.json({ error: 'Error creando tabla: ' + err.message });
-    }
+  const createdUsers = [];
+  let completed = 0;
 
-    const createdUsers = [];
-    let completed = 0;
-
-    users.forEach(user => {
-      const hashedPassword = bcrypt.hashSync(user.password, 10);
-      db.run(
-        'INSERT OR REPLACE INTO users (username, password, role) VALUES (?, ?, ?)',
-        [user.username, hashedPassword, user.role],
-        function(err) {
-          completed++;
-          if (!err) {
-            createdUsers.push({ username: user.username, password: user.password, role: user.role });
-          }
-          if (completed === users.length) {
-            res.json({ success: true, message: 'Usuarios creados', users: createdUsers });
-          }
+  users.forEach(user => {
+    const hashedPassword = bcrypt.hashSync(user.password, 10);
+    db.run(
+      'INSERT INTO users (username, password, role) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role = VALUES(role)',
+      [user.username, hashedPassword, user.role],
+      function(err) {
+        completed++;
+        if (!err) {
+          createdUsers.push({ username: user.username, password: user.password, role: user.role });
         }
-      );
-    });
+        if (completed === users.length) {
+          res.json({ success: true, message: 'Usuarios creados', users: createdUsers });
+        }
+      }
+    );
   });
 });
 
@@ -222,7 +205,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`📁 Base de datos: SQLite`);
+  console.log(`📁 Base de datos: MySQL`);
   console.log(`🔐 API protegida con JWT\n`);
 });
 
