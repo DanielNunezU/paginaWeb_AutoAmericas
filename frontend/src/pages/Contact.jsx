@@ -50,6 +50,10 @@ const Contact = () => {
                       <span className="text-gray-600 text-sm w-20">Asesor 6:</span>
                       <a href="tel:+573203866321" className="text-blue-600 hover:underline">320 386 6321</a>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 7:</span>
+                      <a href="tel:+573112371347" className="text-blue-600 hover:underline">311 237 1347</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -128,6 +132,17 @@ const Contact = () => {
                         className="text-green-600 hover:underline"
                       >
                         320 386 6321
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-sm w-20">Asesor 7:</span>
+                      <a
+                        href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-600 hover:underline"
+                      >
+                        311 237 1347
                       </a>
                     </div>
                   </div>
