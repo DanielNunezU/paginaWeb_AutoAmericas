@@ -152,6 +152,16 @@ app.get('/api/debug/test-login', (req, res) => {
   });
 });
 
+// Ruta para ver estructura de tabla vehicle_images
+app.get('/api/debug/table-structure', (req, res) => {
+  db.all('DESCRIBE vehicle_images', (err, columns) => {
+    if (err) {
+      return res.json({ error: err.message });
+    }
+    res.json({ columns });
+  });
+});
+
 // Ruta para verificar imágenes y uploads
 app.get('/api/debug/uploads', (req, res) => {
   const uploadsPath = path.join(__dirname, 'uploads');
