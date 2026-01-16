@@ -8,6 +8,8 @@ const VehicleDetail = () => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [galleryIndex, setGalleryIndex] = useState(0)
 
   useEffect(() => {
     fetchVehicle()
@@ -57,6 +59,40 @@ const VehicleDetail = () => {
     window.open(url, '_blank')
   }
 
+  // Funciones para la galería de imágenes
+  const openGallery = (index) => {
+    setGalleryIndex(index)
+    setIsGalleryOpen(true)
+  }
+
+  const closeGallery = () => {
+    setIsGalleryOpen(false)
+  }
+
+  const nextImage = () => {
+    if (vehicle?.images) {
+      setGalleryIndex((prev) => (prev + 1) % vehicle.images.length)
+    }
+  }
+
+  const prevImage = () => {
+    if (vehicle?.images) {
+      setGalleryIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length)
+    }
+  }
+
+  // Cerrar galería con tecla Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isGalleryOpen) return
+      if (e.key === 'Escape') closeGallery()
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isGalleryOpen, vehicle])
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -89,13 +125,23 @@ const VehicleDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* Galería de imágenes */}
             <div>
-              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden mb-4">
+              <div
+                className="aspect-video bg-gray-200 rounded-lg overflow-hidden mb-4 cursor-pointer relative group"
+                onClick={() => openGallery(vehicle.images?.findIndex(img => img.image_url === selectedImage) || 0)}
+              >
                 {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt={vehicle.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    <img
+                      src={selectedImage}
+                      alt={vehicle.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                      <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-lg font-semibold">
+                        🔍 Ver galería
+                      </span>
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
                     <span className="text-8xl">🚗</span>
@@ -105,19 +151,22 @@ const VehicleDetail = () => {
 
               {vehicle.images && vehicle.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
-                  {vehicle.images.map((image) => (
+                  {vehicle.images.map((image, index) => (
                     <button
                       key={image.id}
-                      onClick={() => setSelectedImage(image.image_url)}
+                      onClick={() => {
+                        setSelectedImage(image.image_url)
+                        openGallery(index)
+                      }}
                       className={`aspect-video bg-gray-200 rounded-lg overflow-hidden border-2 ${
                         selectedImage === image.image_url
                           ? 'border-blue-600'
-                          : 'border-transparent'
+                          : 'border-transparent hover:border-gray-400'
                       }`}
                     >
                       <img
                         src={image.image_url}
-                        alt={`${vehicle.title} - imagen ${image.id}`}
+                        alt={`${vehicle.title} - imagen ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -229,6 +278,80 @@ const VehicleDetail = () => {
         </div>
 
       </div>
+
+      {/* Modal de Galería */}
+      {isGalleryOpen && vehicle?.images && vehicle.images.length > 0 && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center"
+          onClick={closeGallery}
+        >
+          {/* Botón cerrar */}
+          <button
+            onClick={closeGallery}
+            className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10"
+          >
+            ✕
+          </button>
+
+          {/* Contador de imágenes */}
+          <div className="absolute top-4 left-4 text-white text-lg">
+            {galleryIndex + 1} / {vehicle.images.length}
+          </div>
+
+          {/* Botón anterior */}
+          {vehicle.images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              className="absolute left-4 text-white text-5xl hover:text-gray-300 transition-colors p-4"
+            >
+              ‹
+            </button>
+          )}
+
+          {/* Imagen */}
+          <div
+            className="max-w-[90vw] max-h-[85vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={vehicle.images[galleryIndex]?.image_url}
+              alt={`${vehicle.title} - imagen ${galleryIndex + 1}`}
+              className="max-w-full max-h-[85vh] object-contain"
+            />
+          </div>
+
+          {/* Botón siguiente */}
+          {vehicle.images.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              className="absolute right-4 text-white text-5xl hover:text-gray-300 transition-colors p-4"
+            >
+              ›
+            </button>
+          )}
+
+          {/* Miniaturas */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 max-w-[90vw] overflow-x-auto p-2">
+            {vehicle.images.map((image, index) => (
+              <button
+                key={image.id}
+                onClick={(e) => { e.stopPropagation(); setGalleryIndex(index); }}
+                className={`w-16 h-12 flex-shrink-0 rounded overflow-hidden border-2 transition-all ${
+                  galleryIndex === index
+                    ? 'border-white scale-110'
+                    : 'border-transparent opacity-60 hover:opacity-100'
+                }`}
+              >
+                <img
+                  src={image.image_url}
+                  alt={`Miniatura ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
