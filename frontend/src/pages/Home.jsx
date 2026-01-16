@@ -10,6 +10,7 @@ const Home = () => {
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const [randomSeed, setRandomSeed] = useState(Date.now())
+  const [sortOrder, setSortOrder] = useState('default')
 
   // Actualizar seed cada vez que se hace clic en inicio/logo para mostrar vehículos diferentes
   useEffect(() => {
@@ -103,12 +104,28 @@ const Home = () => {
   const categoria = searchParams.get('categoria')
   const busqueda = searchParams.get('busqueda')
 
+  // Función para ordenar vehículos
+  const sortVehicles = (vehicleList) => {
+    if (sortOrder === 'price_asc') {
+      return [...vehicleList].sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+    } else if (sortOrder === 'price_desc') {
+      return [...vehicleList].sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
+    }
+    return vehicleList
+  }
+
   // Si no hay filtros, mostrar solo 6 vehículos aleatorios (uno de cada categoría si es posible)
   // Se usa randomSeed para forzar recálculo al hacer clic en inicio/logo
   const getDisplayVehicles = () => {
     // Usar randomSeed para que React detecte el cambio y recalcule
     const _ = randomSeed
     const hasFilter = marca || categoria || busqueda
+
+    // Si hay ordenamiento activo, aplicarlo a todos los vehículos filtrados
+    if (sortOrder !== 'default') {
+      return sortVehicles(filteredVehicles)
+    }
+
     if (hasFilter) {
       return filteredVehicles
     }
@@ -198,21 +215,33 @@ const Home = () => {
 
       {/* Vehículos disponibles */}
       <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <h2 className="text-3xl font-bold text-gray-800">
             {getPageTitle()}
           </h2>
-          {hasFilter && (
-            <Link
-              to="/"
-              className="text-red-600 hover:text-red-800 font-medium flex items-center gap-2"
+          <div className="flex items-center gap-4">
+            {/* Filtro de ordenamiento por precio */}
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Limpiar filtros
-            </Link>
-          )}
+              <option value="default">Ordenar por</option>
+              <option value="price_asc">Menor a mayor precio</option>
+              <option value="price_desc">Mayor a menor precio</option>
+            </select>
+            {hasFilter && (
+              <Link
+                to="/"
+                className="text-red-600 hover:text-red-800 font-medium flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Limpiar filtros
+              </Link>
+            )}
+          </div>
         </div>
 
         {displayVehicles.length === 0 ? (
