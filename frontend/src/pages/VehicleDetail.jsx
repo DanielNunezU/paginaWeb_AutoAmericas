@@ -38,6 +38,25 @@ const VehicleDetail = () => {
     }).format(price)
   }
 
+  // Lista de asesores para sorteo aleatorio
+  const asesores = [
+    '573133490087',
+    '573209669384',
+    '573106440913',
+    '573144018594',
+    '573133473617',
+    '573203866321',
+    '573112371347'
+  ]
+
+  // Función para obtener un asesor aleatorio y abrir WhatsApp
+  const handleWhatsAppClick = () => {
+    const asesorAleatorio = asesores[Math.floor(Math.random() * asesores.length)]
+    const mensaje = encodeURIComponent(`Hola, estoy interesado en el vehículo: ${vehicle?.title || 'vehículo'}`)
+    const url = `https://api.whatsapp.com/send?phone=${asesorAleatorio}&text=${mensaje}`
+    window.open(url, '_blank')
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -197,14 +216,12 @@ const VehicleDetail = () => {
                   Contáctanos para más información o para agendar una prueba de manejo.
                 </p>
                 <div className="flex flex-col gap-2">
-                  <a
-                    href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%20Auto%20Americas%20Motors%2C%20estoy%20interesad%40%20en%20un%20veh%C3%ADculo..."
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-center"
+                  <button
+                    onClick={handleWhatsAppClick}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-center cursor-pointer"
                   >
                     💬 WhatsApp
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
