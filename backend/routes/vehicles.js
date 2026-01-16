@@ -173,33 +173,46 @@ router.post('/', authMiddleware, upload.array('images', 10), (req, res) => {
         const vehicleId = this.lastID;
 
         // Guardar imágenes
-        if (req.files && req.files.length > 0) {
-          const insertImage = db.prepare('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)');
-
-          req.files.forEach((file, index) => {
-            const imageUrl = `/uploads/${file.filename}`;
-            const isPrimary = index === 0 ? 1 : 0;
-            insertImage.run([vehicleId, imageUrl, isPrimary]);
-          });
-
-          insertImage.finalize();
-        }
-
-        db.get('SELECT * FROM vehicles WHERE id = ?', [vehicleId], (err, vehicle) => {
-          if (err) {
-            console.error('Error al obtener vehículo:', err);
-            return res.status(500).json({ message: 'Error del servidor' });
+        const saveImages = () => {
+          if (req.files && req.files.length > 0) {
+            let savedCount = 0;
+            req.files.forEach((file, index) => {
+              const imageUrl = `/uploads/${file.filename}`;
+              const isPrimary = index === 0 ? 1 : 0;
+              db.run('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)',
+                [vehicleId, imageUrl, isPrimary],
+                function(err) {
+                  savedCount++;
+                  if (savedCount === req.files.length) {
+                    returnVehicle();
+                  }
+                }
+              );
+            });
+          } else {
+            returnVehicle();
           }
+        };
 
-          db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [vehicleId], (err, images) => {
+        const returnVehicle = () => {
+          db.get('SELECT * FROM vehicles WHERE id = ?', [vehicleId], (err, vehicle) => {
             if (err) {
-              console.error('Error al obtener imágenes:', err);
+              console.error('Error al obtener vehículo:', err);
               return res.status(500).json({ message: 'Error del servidor' });
             }
 
-            res.status(201).json({ ...vehicle, images });
+            db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [vehicleId], (err, images) => {
+              if (err) {
+                console.error('Error al obtener imágenes:', err);
+                return res.status(500).json({ message: 'Error del servidor' });
+              }
+
+              res.status(201).json({ ...vehicle, images });
+            });
           });
-        });
+        };
+
+        saveImages();
       });
     });
   } catch (error) {
@@ -263,32 +276,45 @@ router.put('/:id', authMiddleware, upload.array('images', 10), (req, res) => {
           }
 
           // Agregar nuevas imágenes si se proporcionan
-          if (req.files && req.files.length > 0) {
-            const insertImage = db.prepare('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)');
-
-            req.files.forEach((file) => {
-              const imageUrl = `/uploads/${file.filename}`;
-              insertImage.run([id, imageUrl, 0]);
-            });
-
-            insertImage.finalize();
-          }
-
-          db.get('SELECT * FROM vehicles WHERE id = ?', [id], (err, updatedVehicle) => {
-            if (err) {
-              console.error('Error al obtener vehículo:', err);
-              return res.status(500).json({ message: 'Error del servidor' });
+          const saveImagesAndReturn = () => {
+            if (req.files && req.files.length > 0) {
+              let savedCount = 0;
+              req.files.forEach((file) => {
+                const imageUrl = `/uploads/${file.filename}`;
+                db.run('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)',
+                  [id, imageUrl, 0],
+                  function(err) {
+                    savedCount++;
+                    if (savedCount === req.files.length) {
+                      returnUpdatedVehicle();
+                    }
+                  }
+                );
+              });
+            } else {
+              returnUpdatedVehicle();
             }
+          };
 
-            db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [id], (err, images) => {
+          const returnUpdatedVehicle = () => {
+            db.get('SELECT * FROM vehicles WHERE id = ?', [id], (err, updatedVehicle) => {
               if (err) {
-                console.error('Error al obtener imágenes:', err);
+                console.error('Error al obtener vehículo:', err);
                 return res.status(500).json({ message: 'Error del servidor' });
               }
 
-              res.json({ ...updatedVehicle, images });
+              db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [id], (err, images) => {
+                if (err) {
+                  console.error('Error al obtener imágenes:', err);
+                  return res.status(500).json({ message: 'Error del servidor' });
+                }
+
+                res.json({ ...updatedVehicle, images });
+              });
             });
-          });
+          };
+
+          saveImagesAndReturn();
         });
       };
 
