@@ -17,8 +17,8 @@ RewriteRule ^images/(.*)$ /frontend/dist/images/$1 [L]
 # Redirigir peticiones de API al backend Node.js
 RewriteRule ^api/(.*)$ http://localhost:5000/api/$1 [P,L]
 
-# Redirigir uploads al backend
-RewriteRule ^uploads/(.*)$ http://localhost:5000/uploads/$1 [P,L]
+# Servir uploads directamente desde backend/uploads (sin proxy)
+RewriteRule ^uploads/(.*)$ /backend/uploads/$1 [L]
 
 # Configuracion de cache para archivos estaticos
 <IfModule mod_expires.c>
