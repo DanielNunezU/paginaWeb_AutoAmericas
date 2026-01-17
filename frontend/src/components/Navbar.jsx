@@ -93,7 +93,7 @@ const Navbar = () => {
             <img
               src="/images/logo-autos-duitama.png"
               alt="Autos Duitama"
-              className="h-14 md:h-16 w-auto object-contain"
+              className="h-16 md:h-20 w-auto object-contain"
               onError={(e) => {
                 e.target.style.display = 'none'
                 e.target.nextSibling.style.display = 'flex'

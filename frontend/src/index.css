@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply bg-black text-gray-100;
+    font-family: 'Questrial', sans-serif;
   }
 }
 
