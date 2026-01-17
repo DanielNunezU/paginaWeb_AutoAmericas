@@ -115,18 +115,18 @@ const VehicleDetail = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
+    <div className="bg-gray-900 min-h-screen py-12">
       <div className="container mx-auto px-4">
-        <Link to="/" className="text-yellow-600 hover:underline mb-6 inline-block">
+        <Link to="/" className="text-yellow-500 hover:underline mb-6 inline-block">
           ← Volver al listado
         </Link>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* Galería de imágenes */}
             <div>
               <div
-                className="aspect-video bg-gray-200 rounded-lg overflow-hidden mb-4 cursor-pointer relative group"
+                className="aspect-video bg-gray-700 rounded-lg overflow-hidden mb-4 cursor-pointer relative group"
                 onClick={() => openGallery(vehicle.images?.findIndex(img => img.image_url === selectedImage) || 0)}
               >
                 {selectedImage ? (
@@ -138,12 +138,12 @@ const VehicleDetail = () => {
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
                       <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-lg font-semibold">
-                        🔍 Ver galería
+                        Ver galería
                       </span>
                     </div>
                   </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
                     <span className="text-8xl">🚗</span>
                   </div>
                 )}
@@ -158,10 +158,10 @@ const VehicleDetail = () => {
                         setSelectedImage(image.image_url)
                         openGallery(index)
                       }}
-                      className={`aspect-video bg-gray-200 rounded-lg overflow-hidden border-2 ${
+                      className={`aspect-video bg-gray-700 rounded-lg overflow-hidden border-2 ${
                         selectedImage === image.image_url
-                          ? 'border-yellow-600'
-                          : 'border-transparent hover:border-gray-400'
+                          ? 'border-yellow-500'
+                          : 'border-transparent hover:border-yellow-600/50'
                       }`}
                     >
                       <img
@@ -177,81 +177,81 @@ const VehicleDetail = () => {
 
             {/* Información del vehículo */}
             <div>
-              <h1 className="text-4xl font-bold mb-4 text-gray-800">
+              <h1 className="text-4xl font-bold mb-4 text-gray-100">
                 {vehicle.title}
               </h1>
 
-              <div className="text-3xl font-bold text-yellow-600 mb-6">
+              <div className="text-3xl font-bold text-yellow-500 mb-6">
                 {formatPrice(vehicle.price)}
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-gray-600 text-sm mb-1">Marca</div>
-                  <div className="font-semibold text-lg">{vehicle.brand}</div>
+                <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                  <div className="text-gray-400 text-sm mb-1">Marca</div>
+                  <div className="font-semibold text-lg text-gray-100">{vehicle.brand}</div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-gray-600 text-sm mb-1">Modelo</div>
-                  <div className="font-semibold text-lg">{vehicle.model}</div>
+                <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                  <div className="text-gray-400 text-sm mb-1">Modelo</div>
+                  <div className="font-semibold text-lg text-gray-100">{vehicle.model}</div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-gray-600 text-sm mb-1">Año</div>
-                  <div className="font-semibold text-lg">{vehicle.year}</div>
+                <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                  <div className="text-gray-400 text-sm mb-1">Año</div>
+                  <div className="font-semibold text-lg text-gray-100">{vehicle.year}</div>
                 </div>
 
                 {vehicle.mileage && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Kilometraje</div>
-                    <div className="font-semibold text-lg">
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Kilometraje</div>
+                    <div className="font-semibold text-lg text-gray-100">
                       {vehicle.mileage.toLocaleString()} km
                     </div>
                   </div>
                 )}
 
                 {vehicle.transmission && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Transmisión</div>
-                    <div className="font-semibold text-lg">{vehicle.transmission}</div>
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Transmisión</div>
+                    <div className="font-semibold text-lg text-gray-100">{vehicle.transmission}</div>
                   </div>
                 )}
 
                 {vehicle.fuel_type && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Combustible</div>
-                    <div className="font-semibold text-lg">{vehicle.fuel_type}</div>
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Combustible</div>
+                    <div className="font-semibold text-lg text-gray-100">{vehicle.fuel_type}</div>
                   </div>
                 )}
 
                 {vehicle.color && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Color</div>
-                    <div className="font-semibold text-lg">{vehicle.color}</div>
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Color</div>
+                    <div className="font-semibold text-lg text-gray-100">{vehicle.color}</div>
                   </div>
                 )}
 
                 {vehicle.engine && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Motor</div>
-                    <div className="font-semibold text-lg">{vehicle.engine}</div>
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Motor</div>
+                    <div className="font-semibold text-lg text-gray-100">{vehicle.engine}</div>
                   </div>
                 )}
 
                 {vehicle.load_capacity && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-gray-600 text-sm mb-1">Capacidad de Carga</div>
-                    <div className="font-semibold text-lg">{vehicle.load_capacity}</div>
+                  <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <div className="text-gray-400 text-sm mb-1">Capacidad de Carga</div>
+                    <div className="font-semibold text-lg text-gray-100">{vehicle.load_capacity}</div>
                   </div>
                 )}
               </div>
 
               {vehicle.features && (
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-3 text-gray-800">
+                  <h2 className="text-2xl font-bold mb-3 text-yellow-500">
                     Características
                   </h2>
-                  <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  <div className="text-gray-300 leading-relaxed whitespace-pre-line">
                     {vehicle.features}
                   </div>
                 </div>

@@ -196,7 +196,7 @@ const Home = () => {
   const hasFilter = marca || categoria || busqueda
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-900 min-h-screen">
       {/* Hero Section */}
       <div
         className="relative bg-cover bg-center bg-no-repeat text-white py-24 md:py-32 lg:py-40"
@@ -216,7 +216,7 @@ const Home = () => {
       {/* Vehículos disponibles */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">
+          <h2 className="text-3xl font-bold text-yellow-500">
             {getPageTitle()}
           </h2>
           <div className="flex items-center gap-4">
@@ -224,7 +224,7 @@ const Home = () => {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer"
+              className="px-4 py-2 border border-yellow-600 rounded-lg bg-gray-800 text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 cursor-pointer"
             >
               <option value="default">Ordenar por precio</option>
               <option value="price_asc">Menor a mayor precio</option>
@@ -233,7 +233,7 @@ const Home = () => {
             {hasFilter && (
               <Link
                 to="/"
-                className="text-yellow-600 hover:text-yellow-700 font-medium flex items-center gap-2"
+                className="text-yellow-500 hover:text-yellow-400 font-medium flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -247,14 +247,14 @@ const Home = () => {
         {displayVehicles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🚗</div>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-300">
               {hasFilter
                 ? `No hay vehículos disponibles con los filtros seleccionados`
                 : 'No hay vehículos disponibles en este momento'
               }
             </p>
             {hasFilter && (
-              <Link to="/" className="text-red-600 hover:underline mt-4 inline-block">
+              <Link to="/" className="text-yellow-500 hover:underline mt-4 inline-block">
                 Ver todos los vehículos
               </Link>
             )}
@@ -265,9 +265,9 @@ const Home = () => {
               <Link
                 key={vehicle.id}
                 to={`/vehiculo/${vehicle.slug}`}
-                className="card hover:scale-105 transition-transform duration-300"
+                className="bg-gray-800 border border-yellow-600/30 rounded-lg overflow-hidden hover:border-yellow-500 hover:scale-105 transition-all duration-300 shadow-lg"
               >
-                <div className="aspect-video bg-gray-200 overflow-hidden">
+                <div className="aspect-video bg-gray-700 overflow-hidden">
                   {vehicle.primary_image ? (
                     <img
                       src={vehicle.primary_image}
@@ -275,18 +275,18 @@ const Home = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
                       <span className="text-6xl">🚗</span>
                     </div>
                   )}
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">
+                  <h3 className="text-xl font-bold mb-2 text-gray-100">
                     {vehicle.title}
                   </h3>
 
-                  <div className="flex items-center gap-2 mb-2 text-gray-600">
+                  <div className="flex items-center gap-2 mb-2 text-gray-400">
                     <span className="font-semibold">{vehicle.brand}</span>
                     <span>•</span>
                     <span>{vehicle.model}</span>
@@ -296,23 +296,23 @@ const Home = () => {
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {vehicle.transmission && (
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                      <span className="px-3 py-1 bg-yellow-600/20 text-yellow-500 rounded-full text-sm border border-yellow-600/30">
                         {vehicle.transmission}
                       </span>
                     )}
                     {vehicle.fuel_type && (
-                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                      <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm border border-green-600/30">
                         {vehicle.fuel_type}
                       </span>
                     )}
                     {vehicle.mileage && (
-                      <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
+                      <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm border border-gray-600">
                         {vehicle.mileage.toLocaleString()} km
                       </span>
                     )}
                   </div>
 
-                  <div className="text-2xl font-bold text-yellow-600">
+                  <div className="text-2xl font-bold text-yellow-500">
                     {formatPrice(vehicle.price)}
                   </div>
                 </div>

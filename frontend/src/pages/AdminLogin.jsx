@@ -30,22 +30,22 @@ const AdminLogin = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4">
+      <div className="max-w-md w-full bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Panel de Administración</h2>
-          <p className="text-gray-600 mt-2">Ingresa tus credenciales para continuar</p>
+          <h2 className="text-3xl font-bold text-yellow-500">Panel de Administración</h2>
+          <p className="text-gray-400 mt-2">Ingresa tus credenciales para continuar</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-900/50 border border-red-600 text-red-300 px-4 py-3 rounded-lg mb-6">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
               Usuario
             </label>
             <input
@@ -54,14 +54,14 @@ const AdminLogin = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="input-field"
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all"
               placeholder="Ingresa tu usuario"
               disabled={loading}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
               Contraseña
             </label>
             <input
@@ -70,7 +70,7 @@ const AdminLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="input-field"
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all"
               placeholder="Ingresa tu contraseña"
               disabled={loading}
             />
@@ -86,7 +86,7 @@ const AdminLogin = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <a href="/" className="text-blue-600 hover:underline text-sm">
+          <a href="/" className="text-yellow-500 hover:underline text-sm">
             ← Volver al inicio
           </a>
         </div>
