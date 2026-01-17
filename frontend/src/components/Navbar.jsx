@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
+const BUILD_VERSION = '2.0.1'
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth()
   const navigate = useNavigate()
@@ -11,6 +12,9 @@ const Navbar = () => {
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false)
   const [showMobileCategories, setShowMobileCategories] = useState(false)
   const [showMobileBrands, setShowMobileBrands] = useState(false)
+
+  // Log version on mount for debugging
+  useEffect(() => { console.log('Navbar version:', BUILD_VERSION) }, [])
   const [brands, setBrands] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('carro')
   const [searchQuery, setSearchQuery] = useState('')
