@@ -236,10 +236,10 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-black py-8">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Panel de Administración</h1>
+          <h1 className="text-3xl font-bold text-yellow-500">Panel de Administración</h1>
           <div className="flex gap-3">
             <button
               onClick={() => setShowBrandManager(!showBrandManager)}
@@ -257,15 +257,15 @@ const AdminDashboard = () => {
         </div>
 
         {showBrandManager && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Gestionar Marcas</h2>
+          <div className="bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg p-6 mb-8">
+            <h2 className="text-2xl font-bold mb-6 text-yellow-500">Gestionar Marcas</h2>
 
             {/* Formulario para agregar marca */}
-            <form onSubmit={handleAddBrand} className="mb-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4">Agregar Nueva Marca</h3>
+            <form onSubmit={handleAddBrand} className="mb-8 p-4 bg-gray-700 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 text-gray-100">Agregar Nueva Marca</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Nombre de la Marca
                   </label>
                   <input
@@ -273,18 +273,18 @@ const AdminDashboard = () => {
                     value={newBrandName}
                     onChange={(e) => setNewBrandName(e.target.value)}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: Tesla"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Categoría
                   </label>
                   <select
                     value={newBrandCategory}
                     onChange={(e) => setNewBrandCategory(e.target.value)}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="carro">Carros y Camionetas</option>
                     <option value="moto">Motos</option>
@@ -308,19 +308,19 @@ const AdminDashboard = () => {
 
                 return (
                   <div key={category}>
-                    <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-100">
                       {categoryLabel} ({categoryBrands.length})
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {categoryBrands.map((brand) => (
                         <div
                           key={brand.id}
-                          className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg"
+                          className="flex items-center justify-between bg-gray-700 px-3 py-2 rounded-lg border border-gray-600"
                         >
-                          <span className="text-sm font-medium text-gray-700">{brand.name}</span>
+                          <span className="text-sm font-medium text-gray-200">{brand.name}</span>
                           <button
                             onClick={() => handleDeleteBrand(brand.id)}
-                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                            className="text-red-400 hover:text-red-300 text-sm font-medium"
                           >
                             ✕
                           </button>
@@ -338,15 +338,15 @@ const AdminDashboard = () => {
         )}
 
         {showForm && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          <div className="bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg p-6 mb-8">
+            <h2 className="text-2xl font-bold mb-6 text-yellow-500">
               {editingVehicle ? 'Editar Vehículo' : 'Nuevo Vehículo'}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Título *
                   </label>
                   <input
@@ -355,13 +355,13 @@ const AdminDashboard = () => {
                     value={formData.title}
                     onChange={handleInputChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: Toyota Corolla 2020"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Categoría *
                   </label>
                   <select
@@ -369,7 +369,7 @@ const AdminDashboard = () => {
                     value={formData.category}
                     onChange={handleInputChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="carro">Carro / Camioneta</option>
                     <option value="moto">Moto</option>
@@ -379,7 +379,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Marca *
                   </label>
                   <select
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
                     value={formData.brand}
                     onChange={handleInputChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="">Seleccionar marca</option>
                     {brands.map((brand) => (
@@ -399,7 +399,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Modelo *
                   </label>
                   <input
@@ -408,13 +408,13 @@ const AdminDashboard = () => {
                     value={formData.model}
                     onChange={handleInputChange}
                     required
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: Corolla"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Año *
                   </label>
                   <input
@@ -425,12 +425,12 @@ const AdminDashboard = () => {
                     required
                     min="1900"
                     max={new Date().getFullYear() + 1}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Precio *
                   </label>
                   <input
@@ -440,13 +440,13 @@ const AdminDashboard = () => {
                     onChange={handleInputChange}
                     required
                     min="0"
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: 50000000"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Kilometraje
                   </label>
                   <input
@@ -455,20 +455,20 @@ const AdminDashboard = () => {
                     value={formData.mileage}
                     onChange={handleInputChange}
                     min="0"
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: 45000"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Combustible
                   </label>
                   <select
                     name="fuel_type"
                     value={formData.fuel_type}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="">Seleccionar</option>
                     {FUEL_TYPES.map((type) => (
@@ -480,14 +480,14 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Transmisión
                   </label>
                   <select
                     name="transmission"
                     value={formData.transmission}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="">Seleccionar</option>
                     {TRANSMISSION_TYPES.map((type) => (
@@ -499,7 +499,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Color
                   </label>
                   <input
@@ -507,13 +507,13 @@ const AdminDashboard = () => {
                     name="color"
                     value={formData.color}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: Negro"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Motor
                   </label>
                   <input
@@ -521,20 +521,20 @@ const AdminDashboard = () => {
                     name="engine"
                     value={formData.engine}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                     placeholder="Ej: 2.0L Turbo"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Estado
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   >
                     <option value="available">Disponible</option>
                     <option value="sold">Vendido</option>
@@ -544,7 +544,7 @@ const AdminDashboard = () => {
 
                 {(formData.category === 'carga' || formData.category === 'maquinaria') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Capacidad de Carga
                     </label>
                     <input
@@ -552,7 +552,7 @@ const AdminDashboard = () => {
                       name="load_capacity"
                       value={formData.load_capacity}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                       placeholder="Ej: 10 toneladas"
                     />
                   </div>
@@ -560,7 +560,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Características
                 </label>
                 <textarea
@@ -568,13 +568,13 @@ const AdminDashboard = () => {
                   value={formData.features}
                   onChange={handleInputChange}
                   rows="4"
-                  className="input-field"
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
                   placeholder="Lista las características principales..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Imágenes
                 </label>
                 <input
@@ -582,7 +582,7 @@ const AdminDashboard = () => {
                   multiple
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="input-field"
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-600 file:text-white file:cursor-pointer"
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Puedes seleccionar múltiples imágenes (máx 5MB cada una)
@@ -600,7 +600,7 @@ const AdminDashboard = () => {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn-secondary"
+                  className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
                 >
                   Cancelar
                 </button>
@@ -609,40 +609,40 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800">
+        <div className="bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-700">
+            <h2 className="text-xl font-bold text-yellow-500">
               Vehículos ({vehicles.length})
             </h2>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-700">
+              <thead className="bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
                     Vehículo
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
                     Precio
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
                     Fecha
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase">
                     Acciones
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-gray-800 divide-y divide-gray-700">
                 {vehicles.map((vehicle) => (
-                  <tr key={vehicle.id} className="hover:bg-gray-50">
+                  <tr key={vehicle.id} className="hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="h-12 w-16 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                        <div className="h-12 w-16 flex-shrink-0 bg-gray-700 rounded overflow-hidden">
                           {vehicle.primary_image ? (
                             <img
                               src={vehicle.primary_image}
@@ -656,49 +656,49 @@ const AdminDashboard = () => {
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="font-medium text-gray-900">{vehicle.title}</div>
-                          <div className="text-sm text-gray-500">
+                          <div className="font-medium text-gray-100">{vehicle.title}</div>
+                          <div className="text-sm text-gray-400">
                             {vehicle.brand} {vehicle.model} • {vehicle.year}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-yellow-500">
                         ${vehicle.price.toLocaleString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         vehicle.status === 'available'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-green-900/50 text-green-400 border border-green-600'
                           : vehicle.status === 'sold'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-red-900/50 text-red-400 border border-red-600'
+                          : 'bg-yellow-900/50 text-yellow-400 border border-yellow-600'
                       }`}>
                         {vehicle.status === 'available' ? 'Disponible' :
                          vehicle.status === 'sold' ? 'Vendido' : 'Reservado'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {new Date(vehicle.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => window.open(`/vehiculo/${vehicle.slug}`, '_blank')}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
+                        className="text-blue-400 hover:text-blue-300 mr-4"
                       >
                         Ver
                       </button>
                       <button
                         onClick={() => handleEdit(vehicle)}
-                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                        className="text-yellow-400 hover:text-yellow-300 mr-4"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => handleDelete(vehicle.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-400 hover:text-red-300"
                       >
                         Eliminar
                       </button>

@@ -34,9 +34,9 @@ function App() {
               />
             </Routes>
           </main>
-          <footer className="bg-gray-800 text-white py-6 mt-12">
+          <footer className="bg-black text-white py-6 mt-12 border-t border-yellow-600">
             <div className="container mx-auto px-4 text-center">
-              <p>&copy; 2026 Autos Duitama. Todos los derechos reservados.</p>
+              <p className="text-gray-300">&copy; 2026 <span className="text-yellow-500">Autos Duitama</span>. Todos los derechos reservados.</p>
             </div>
           </footer>
         </div>
