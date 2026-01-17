@@ -265,7 +265,7 @@ const Home = () => {
               <Link
                 key={vehicle.id}
                 to={`/vehiculo/${vehicle.slug}`}
-                className="bg-gray-800 border border-yellow-600/30 rounded-lg overflow-hidden hover:border-yellow-500 hover:scale-105 transition-all duration-300 shadow-lg"
+                className="bg-black border border-yellow-600/30 rounded-lg overflow-hidden hover:border-yellow-500 hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 <div className="aspect-video bg-gray-700 overflow-hidden">
                   {vehicle.primary_image ? (

@@ -121,7 +121,7 @@ const VehicleDetail = () => {
           ← Volver al listado
         </Link>
 
-        <div className="bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-black border border-yellow-600/30 rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* Galería de imágenes */}
             <div>
