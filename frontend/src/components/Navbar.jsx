@@ -9,6 +9,8 @@ const Navbar = () => {
   const location = useLocation()
   const [showBrandsMenu, setShowBrandsMenu] = useState(false)
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false)
+  const [showMobileCategories, setShowMobileCategories] = useState(false)
+  const [showMobileBrands, setShowMobileBrands] = useState(false)
   const [brands, setBrands] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('carro')
   const [searchQuery, setSearchQuery] = useState('')
@@ -16,32 +18,22 @@ const Navbar = () => {
 
   const categoriesRef = useRef(null)
   const brandsRef = useRef(null)
-  const categoriesMobileRef = useRef(null)
-  const brandsMobileRef = useRef(null)
 
-  // Cerrar menús al hacer click fuera (usando captura para detectar antes)
+  // Cerrar menús desktop al hacer click fuera (solo para desktop)
   useEffect(() => {
     const handleClickOutside = (event) => {
-      const isInsideCategories =
-        (categoriesRef.current && categoriesRef.current.contains(event.target)) ||
-        (categoriesMobileRef.current && categoriesMobileRef.current.contains(event.target))
-
-      const isInsideBrands =
-        (brandsRef.current && brandsRef.current.contains(event.target)) ||
-        (brandsMobileRef.current && brandsMobileRef.current.contains(event.target))
-
-      if (!isInsideCategories) {
+      // Solo aplicar para menús desktop
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
         setShowCategoriesMenu(false)
       }
-      if (!isInsideBrands) {
+      if (brandsRef.current && !brandsRef.current.contains(event.target)) {
         setShowBrandsMenu(false)
       }
     }
 
-    // Usar click - funciona en desktop y móvil
-    document.addEventListener('click', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 
@@ -333,44 +325,44 @@ const Navbar = () => {
               </a>
 
               {/* Categorías Móvil */}
-              <div className="border-t border-yellow-600/30" ref={categoriesMobileRef}>
+              <div className="border-t border-yellow-600/30">
                 <button
-                  onClick={() => setShowCategoriesMenu(!showCategoriesMenu)}
+                  onClick={() => { setShowMobileCategories(!showMobileCategories); setShowMobileBrands(false); }}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
                 >
                   <span>Categorías</span>
-                  <svg className={`w-4 h-4 transition-transform ${showCategoriesMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-4 h-4 transition-transform ${showMobileCategories ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {showCategoriesMenu && (
+                {showMobileCategories && (
                   <div className="bg-gray-800 py-2">
                     <button
-                      onClick={() => { handleAllVehicles(); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleAllVehicles(); setIsMobileMenuOpen(false); setShowMobileCategories(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
                       Todos los vehículos
                     </button>
                     <button
-                      onClick={() => { handleCategoryClick('carro'); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleCategoryClick('carro'); setIsMobileMenuOpen(false); setShowMobileCategories(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
                       Carros y Camionetas
                     </button>
                     <button
-                      onClick={() => { handleCategoryClick('moto'); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleCategoryClick('moto'); setIsMobileMenuOpen(false); setShowMobileCategories(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
                       Motos
                     </button>
                     <button
-                      onClick={() => { handleCategoryClick('carga'); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleCategoryClick('carga'); setIsMobileMenuOpen(false); setShowMobileCategories(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
                       Carga Pesada
                     </button>
                     <button
-                      onClick={() => { handleCategoryClick('maquinaria'); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleCategoryClick('maquinaria'); setIsMobileMenuOpen(false); setShowMobileCategories(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
                       Maquinaria Amarilla
@@ -380,20 +372,20 @@ const Navbar = () => {
               </div>
 
               {/* Marcas Móvil */}
-              <div className="border-t border-yellow-600/30" ref={brandsMobileRef}>
+              <div className="border-t border-yellow-600/30">
                 <button
-                  onClick={() => setShowBrandsMenu(!showBrandsMenu)}
+                  onClick={() => { setShowMobileBrands(!showMobileBrands); setShowMobileCategories(false); }}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
                 >
                   <span>Marcas</span>
-                  <svg className={`w-4 h-4 transition-transform ${showBrandsMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-4 h-4 transition-transform ${showMobileBrands ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {showBrandsMenu && (
+                {showMobileBrands && (
                   <div className="bg-gray-800 py-2 max-h-60 overflow-y-auto">
                     <button
-                      onClick={() => { handleAllVehicles(); setIsMobileMenuOpen(false); }}
+                      onClick={() => { handleAllVehicles(); setIsMobileMenuOpen(false); setShowMobileBrands(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm font-medium"
                     >
                       Todas las marcas
@@ -404,7 +396,7 @@ const Navbar = () => {
                     {brands.map((brand) => (
                       <button
                         key={brand.id}
-                        onClick={() => { handleBrandClick(brand.name); setIsMobileMenuOpen(false); }}
+                        onClick={() => { handleBrandClick(brand.name); setIsMobileMenuOpen(false); setShowMobileBrands(false); }}
                         className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                       >
                         {brand.name}
