@@ -120,7 +120,7 @@ const VehiclesList = () => {
   const hasFilter = marca || categoria || busqueda
 
   return (
-    <div className="bg-gray-900 min-h-screen">
+    <div className="bg-black min-h-screen">
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-yellow-500">

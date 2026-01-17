@@ -30,7 +30,7 @@ const AdminLogin = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-black py-12 px-4">
       <div className="max-w-md w-full bg-gray-800 border border-yellow-600/30 rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-yellow-500">Panel de Administración</h2>

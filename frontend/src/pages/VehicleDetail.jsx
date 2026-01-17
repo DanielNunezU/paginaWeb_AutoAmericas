@@ -115,7 +115,7 @@ const VehicleDetail = () => {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen py-12">
+    <div className="bg-black min-h-screen py-12">
       <div className="container mx-auto px-4">
         <Link to="/" className="text-yellow-500 hover:underline mb-6 inline-block">
           ← Volver al listado

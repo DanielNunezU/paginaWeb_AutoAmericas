@@ -196,7 +196,7 @@ const Home = () => {
   const hasFilter = marca || categoria || busqueda
 
   return (
-    <div className="bg-gray-900 min-h-screen">
+    <div className="bg-black min-h-screen">
       {/* Hero Section */}
       <div
         className="relative bg-cover bg-center bg-no-repeat text-white py-24 md:py-32 lg:py-40"
