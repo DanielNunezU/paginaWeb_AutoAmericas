@@ -96,7 +96,7 @@ const VehicleDetail = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-600"></div>
       </div>
     )
   }
@@ -107,7 +107,7 @@ const VehicleDetail = () => {
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
-        <Link to="/" className="text-blue-600 hover:underline">
+        <Link to="/" className="text-amber-600 hover:underline">
           ← Volver al inicio
         </Link>
       </div>
@@ -117,7 +117,7 @@ const VehicleDetail = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-12">
       <div className="container mx-auto px-4">
-        <Link to="/" className="text-blue-600 hover:underline mb-6 inline-block">
+        <Link to="/" className="text-amber-600 hover:underline mb-6 inline-block">
           ← Volver al listado
         </Link>
 
@@ -160,7 +160,7 @@ const VehicleDetail = () => {
                       }}
                       className={`aspect-video bg-gray-200 rounded-lg overflow-hidden border-2 ${
                         selectedImage === image.image_url
-                          ? 'border-blue-600'
+                          ? 'border-amber-600'
                           : 'border-transparent hover:border-gray-400'
                       }`}
                     >
@@ -181,7 +181,7 @@ const VehicleDetail = () => {
                 {vehicle.title}
               </h1>
 
-              <div className="text-3xl font-bold text-blue-600 mb-6">
+              <div className="text-3xl font-bold text-amber-600 mb-6">
                 {formatPrice(vehicle.price)}
               </div>
 
@@ -257,11 +257,11 @@ const VehicleDetail = () => {
                 </div>
               )}
 
-              <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
-                <h3 className="text-xl font-bold mb-3 text-blue-900">
+              <div className="bg-amber-50 border border-amber-200 p-6 rounded-lg">
+                <h3 className="text-xl font-bold mb-3 text-amber-900">
                   ¿Interesado en este vehículo?
                 </h3>
-                <p className="text-blue-800 mb-4">
+                <p className="text-amber-800 mb-4">
                   Contáctanos para más información o para agendar una prueba de manejo.
                 </p>
                 <div className="flex flex-col gap-2">
