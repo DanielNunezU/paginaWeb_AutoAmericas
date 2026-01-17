@@ -84,10 +84,10 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-gray-900 via-stone-800 to-amber-700 text-white shadow-lg">
+    <nav className="bg-black text-white shadow-lg">
       <div className="container mx-auto px-4">
         {/* Primera fila: Logo, Búsqueda y Autenticación */}
-        <div className="flex justify-between items-center py-4 border-b border-gray-700">
+        <div className="flex justify-between items-center py-4 border-b border-yellow-600/30">
           {/* Logo */}
           <a href="/" onClick={handleHomeClick} className="flex items-center hover:opacity-90 transition-opacity flex-shrink-0 cursor-pointer">
             <img
@@ -112,11 +112,11 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar vehículos..."
-                className="w-full px-4 py-2 pr-12 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 pr-12 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-md transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-600 hover:bg-yellow-500 text-white p-2 rounded-md transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -132,7 +132,7 @@ const Navbar = () => {
                 <span className="text-sm">Hola, {user?.username}</span>
                 <button
                   onClick={handleLogout}
-                  className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-lg transition-colors font-medium"
+                  className="bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded-lg transition-colors font-medium"
                 >
                   Cerrar Sesión
                 </button>
@@ -157,7 +157,7 @@ const Navbar = () => {
         </div>
 
         {/* Barra de búsqueda móvil */}
-        <div className="md:hidden py-3 border-b border-gray-700">
+        <div className="md:hidden py-3 border-b border-yellow-600/30">
           <form onSubmit={handleSearch} className="w-full">
             <div className="relative">
               <input
@@ -165,11 +165,11 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar vehículos..."
-                className="w-full px-4 py-2 pr-12 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-4 py-2 pr-12 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-md transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-600 hover:bg-yellow-500 text-white p-2 rounded-md transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -181,7 +181,7 @@ const Navbar = () => {
 
         {/* Segunda fila: Navegación Desktop */}
         <div className="hidden md:flex items-center gap-8 lg:gap-14 xl:gap-16 py-3">
-            <a href="/" onClick={handleHomeClick} className="hover:text-amber-400 transition-colors font-medium cursor-pointer">
+            <a href="/" onClick={handleHomeClick} className="hover:text-yellow-500 transition-colors font-medium cursor-pointer">
               Inicio
             </a>
 
@@ -192,7 +192,7 @@ const Navbar = () => {
             >
               <button
                 onClick={handleCategoriesClick}
-                className="hover:text-amber-400 transition-colors font-medium flex items-center gap-1"
+                className="hover:text-yellow-500 transition-colors font-medium flex items-center gap-1"
               >
                 Categorías
                 <svg className={`w-4 h-4 transition-transform ${showCategoriesMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,32 +204,32 @@ const Navbar = () => {
                 <div className="absolute top-full mt-2 left-0 bg-white text-gray-800 rounded-lg shadow-xl py-2 w-48 z-50">
                   <button
                     onClick={handleAllVehicles}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors font-medium"
                   >
                     Todos los vehículos
                   </button>
                   <div className="border-t border-gray-200 my-2"></div>
                   <button
                     onClick={() => handleCategoryClick('carro')}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
                   >
                     🚗 Carros y Camionetas
                   </button>
                   <button
                     onClick={() => handleCategoryClick('moto')}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
                   >
                     🏍️ Motos
                   </button>
                   <button
                     onClick={() => handleCategoryClick('carga')}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
                   >
                     🚚 Carga Pesada
                   </button>
                   <button
                     onClick={() => handleCategoryClick('maquinaria')}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
                   >
                     🚜 Maquinaria Amarilla
                   </button>
@@ -244,7 +244,7 @@ const Navbar = () => {
             >
               <button
                 onClick={handleBrandsClick}
-                className="hover:text-amber-400 transition-colors font-medium flex items-center gap-1"
+                className="hover:text-yellow-500 transition-colors font-medium flex items-center gap-1"
               >
                 Marcas
                 <svg className={`w-4 h-4 transition-transform ${showBrandsMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +256,7 @@ const Navbar = () => {
                 <div className="absolute top-full mt-2 left-0 bg-white text-gray-800 rounded-lg shadow-xl py-2 w-48 z-50 max-h-96 overflow-y-auto">
                   <button
                     onClick={handleAllVehicles}
-                    className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors font-medium"
                   >
                     Todas las marcas
                   </button>
@@ -268,7 +268,7 @@ const Navbar = () => {
                     <button
                       key={brand.id}
                       onClick={() => handleBrandClick(brand.name)}
-                      className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors"
+                      className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
                     >
                       {brand.name}
                     </button>
@@ -282,16 +282,16 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link to="/contacto" className="hover:text-amber-400 transition-colors font-medium">
+            <Link to="/contacto" className="hover:text-yellow-500 transition-colors font-medium">
               Contáctenos
             </Link>
 
-            <Link to="/simulador-credito" className="hover:text-amber-400 transition-colors font-medium">
+            <Link to="/simulador-credito" className="hover:text-yellow-500 transition-colors font-medium">
               Simulador de Crédito
             </Link>
 
             {isAuthenticated && (
-              <Link to="/admin/dashboard" className="hover:text-amber-400 transition-colors font-medium">
+              <Link to="/admin/dashboard" className="hover:text-yellow-500 transition-colors font-medium">
                 Panel Admin
               </Link>
             )}
@@ -299,7 +299,7 @@ const Navbar = () => {
 
         {/* Menú Móvil */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-700">
+          <div className="md:hidden border-t border-yellow-600/30">
             <div className="py-2 space-y-1">
               <a
                 href="/"
@@ -310,7 +310,7 @@ const Navbar = () => {
               </a>
 
               {/* Categorías Móvil */}
-              <div className="border-t border-gray-700">
+              <div className="border-t border-yellow-600/30">
                 <button
                   onClick={() => setShowCategoriesMenu(!showCategoriesMenu)}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
@@ -357,7 +357,7 @@ const Navbar = () => {
               </div>
 
               {/* Marcas Móvil */}
-              <div className="border-t border-gray-700">
+              <div className="border-t border-yellow-600/30">
                 <button
                   onClick={() => setShowBrandsMenu(!showBrandsMenu)}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
@@ -394,7 +394,7 @@ const Navbar = () => {
               <Link
                 to="/contacto"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-gray-700"
+                className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-yellow-600/30"
               >
                 Contáctenos
               </Link>
@@ -402,7 +402,7 @@ const Navbar = () => {
               <Link
                 to="/simulador-credito"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-gray-700"
+                className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-yellow-600/30"
               >
                 Simulador de Crédito
               </Link>
@@ -412,15 +412,15 @@ const Navbar = () => {
                   <Link
                     to="/admin/dashboard"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-gray-700"
+                    className="block px-4 py-3 hover:bg-gray-800 transition-colors border-t border-yellow-600/30"
                   >
                     Panel Admin
                   </Link>
-                  <div className="border-t border-gray-700 px-4 py-3">
+                  <div className="border-t border-yellow-600/30 px-4 py-3">
                     <p className="text-sm text-gray-400 mb-2">Hola, {user?.username}</p>
                     <button
                       onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                      className="w-full bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-lg transition-colors font-medium"
+                      className="w-full bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded-lg transition-colors font-medium"
                     >
                       Cerrar Sesión
                     </button>
