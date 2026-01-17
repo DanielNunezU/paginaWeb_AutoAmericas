@@ -19,7 +19,7 @@ const Navbar = () => {
   const categoriesMobileRef = useRef(null)
   const brandsMobileRef = useRef(null)
 
-  // Cerrar menús al hacer click/touch fuera
+  // Cerrar menús al hacer click fuera (usando captura para detectar antes)
   useEffect(() => {
     const handleClickOutside = (event) => {
       const isInsideCategories =
@@ -38,11 +38,10 @@ const Navbar = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('touchstart', handleClickOutside)
+    // Usar click - funciona en desktop y móvil
+    document.addEventListener('click', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('touchstart', handleClickOutside)
+      document.removeEventListener('click', handleClickOutside)
     }
   }, [])
 
@@ -356,25 +355,25 @@ const Navbar = () => {
                       onClick={() => { handleCategoryClick('carro'); setIsMobileMenuOpen(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
-                      🚗 Carros y Camionetas
+                      Carros y Camionetas
                     </button>
                     <button
                       onClick={() => { handleCategoryClick('moto'); setIsMobileMenuOpen(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
-                      🏍️ Motos
+                      Motos
                     </button>
                     <button
                       onClick={() => { handleCategoryClick('carga'); setIsMobileMenuOpen(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
-                      🚚 Carga Pesada
+                      Carga Pesada
                     </button>
                     <button
                       onClick={() => { handleCategoryClick('maquinaria'); setIsMobileMenuOpen(false); }}
                       className="w-full text-left px-8 py-2 hover:bg-gray-700 text-sm"
                     >
-                      🚜 Maquinaria Amarilla
+                      Maquinaria Amarilla
                     </button>
                   </div>
                 )}
