@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
 const Navbar = () => {
@@ -14,24 +14,34 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Handlers para el menú de categorías - click para abrir, mouse leave para cerrar
+  const categoriesRef = useRef(null)
+  const brandsRef = useRef(null)
+
+  // Cerrar menús al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+        setShowCategoriesMenu(false)
+      }
+      if (brandsRef.current && !brandsRef.current.contains(event.target)) {
+        setShowBrandsMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Handlers para el menú de categorías
   const handleCategoriesClick = () => {
     setShowCategoriesMenu(!showCategoriesMenu)
-    setShowBrandsMenu(false) // Cerrar el otro menú
+    setShowBrandsMenu(false)
   }
 
-  const handleCategoriesMouseLeave = () => {
-    setShowCategoriesMenu(false)
-  }
-
-  // Handlers para el menú de marcas - click para abrir, mouse leave para cerrar
+  // Handlers para el menú de marcas
   const handleBrandsClick = () => {
     setShowBrandsMenu(!showBrandsMenu)
-    setShowCategoriesMenu(false) // Cerrar el otro menú
-  }
-
-  const handleBrandsMouseLeave = () => {
-    setShowBrandsMenu(false)
+    setShowCategoriesMenu(false)
   }
 
   const handleLogout = () => {
@@ -188,7 +198,7 @@ const Navbar = () => {
             {/* Dropdown de Categorías */}
             <div
               className="relative"
-              onMouseLeave={handleCategoriesMouseLeave}
+              ref={categoriesRef}
             >
               <button
                 onClick={handleCategoriesClick}
@@ -201,37 +211,37 @@ const Navbar = () => {
               </button>
 
               {showCategoriesMenu && (
-                <div className="absolute top-full mt-2 left-0 bg-white text-gray-800 rounded-lg shadow-xl py-2 w-48 z-50">
+                <div className="absolute top-full mt-2 left-0 bg-gray-900 text-gray-100 rounded-lg shadow-xl py-2 w-48 z-50 border border-yellow-600/30">
                   <button
                     onClick={handleAllVehicles}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors font-medium"
                   >
                     Todos los vehículos
                   </button>
-                  <div className="border-t border-gray-200 my-2"></div>
+                  <div className="border-t border-yellow-600/30 my-2"></div>
                   <button
                     onClick={() => handleCategoryClick('carro')}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors"
                   >
-                    🚗 Carros y Camionetas
+                    Carros y Camionetas
                   </button>
                   <button
                     onClick={() => handleCategoryClick('moto')}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors"
                   >
-                    🏍️ Motos
+                    Motos
                   </button>
                   <button
                     onClick={() => handleCategoryClick('carga')}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors"
                   >
-                    🚚 Carga Pesada
+                    Carga Pesada
                   </button>
                   <button
                     onClick={() => handleCategoryClick('maquinaria')}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors"
                   >
-                    🚜 Maquinaria Amarilla
+                    Maquinaria Amarilla
                   </button>
                 </div>
               )}
@@ -240,7 +250,7 @@ const Navbar = () => {
             {/* Dropdown de Marcas */}
             <div
               className="relative"
-              onMouseLeave={handleBrandsMouseLeave}
+              ref={brandsRef}
             >
               <button
                 onClick={handleBrandsClick}
@@ -253,28 +263,28 @@ const Navbar = () => {
               </button>
 
               {showBrandsMenu && (
-                <div className="absolute top-full mt-2 left-0 bg-white text-gray-800 rounded-lg shadow-xl py-2 w-48 z-50 max-h-96 overflow-y-auto">
+                <div className="absolute top-full mt-2 left-0 bg-gray-900 text-gray-100 rounded-lg shadow-xl py-2 w-48 z-50 max-h-96 overflow-y-auto border border-yellow-600/30">
                   <button
                     onClick={handleAllVehicles}
-                    className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors font-medium"
                   >
                     Todas las marcas
                   </button>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+                  <div className="border-t border-yellow-600/30 my-2"></div>
+                  <div className="px-4 py-2 text-xs font-semibold text-yellow-500 uppercase">
                     {selectedCategory === 'carro' ? 'Carros y Camionetas' : selectedCategory === 'moto' ? 'Motos' : selectedCategory === 'carga' ? 'Carga Pesada' : 'Maquinaria Amarilla'}
                   </div>
                   {brands.map((brand) => (
                     <button
                       key={brand.id}
                       onClick={() => handleBrandClick(brand.name)}
-                      className="w-full text-left px-4 py-2 hover:bg-yellow-50 transition-colors"
+                      className="w-full text-left px-4 py-2 hover:bg-gray-800 hover:text-yellow-500 transition-colors"
                     >
                       {brand.name}
                     </button>
                   ))}
                   {brands.length === 0 && (
-                    <div className="px-4 py-2 text-sm text-gray-500">
+                    <div className="px-4 py-2 text-sm text-gray-400">
                       No hay marcas disponibles
                     </div>
                   )}
