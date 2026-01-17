@@ -152,6 +152,17 @@ app.get('/api/debug/test-login', (req, res) => {
   });
 });
 
+// Ruta para ver imágenes de un vehículo específico
+app.get('/api/debug/vehicle-images/:id', (req, res) => {
+  const { id } = req.params;
+  db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [id], (err, images) => {
+    if (err) {
+      return res.json({ error: err.message });
+    }
+    res.json({ vehicleId: id, imageCount: images ? images.length : 0, images: images || [] });
+  });
+});
+
 // Ruta para ver estructura de tabla vehicle_images
 app.get('/api/debug/table-structure', (req, res) => {
   db.all('DESCRIBE vehicle_images', (err, columns) => {
