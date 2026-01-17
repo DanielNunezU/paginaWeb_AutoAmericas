@@ -20,14 +20,21 @@ RewriteRule ^api/(.*)$ http://localhost:5000/api/$1 [P,L]
 # Servir uploads directamente desde backend/uploads (sin proxy)
 RewriteRule ^uploads/(.*)$ /backend/uploads/$1 [L]
 
-# Configuracion de cache para archivos estaticos
+# Desactivar cache para HTML, JS y CSS (forzar recarga)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|js|css)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# Configuracion de cache solo para imagenes
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType image/jpeg "access plus 1 month"
     ExpiresByType image/png "access plus 1 month"
     ExpiresByType image/webp "access plus 1 month"
-    ExpiresByType text/css "access plus 1 week"
-    ExpiresByType application/javascript "access plus 1 week"
 </IfModule>
 
 # Compresion GZIP
