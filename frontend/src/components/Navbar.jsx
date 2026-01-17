@@ -16,20 +16,34 @@ const Navbar = () => {
 
   const categoriesRef = useRef(null)
   const brandsRef = useRef(null)
+  const categoriesMobileRef = useRef(null)
+  const brandsMobileRef = useRef(null)
 
-  // Cerrar menús al hacer click fuera
+  // Cerrar menús al hacer click/touch fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+      const isInsideCategories =
+        (categoriesRef.current && categoriesRef.current.contains(event.target)) ||
+        (categoriesMobileRef.current && categoriesMobileRef.current.contains(event.target))
+
+      const isInsideBrands =
+        (brandsRef.current && brandsRef.current.contains(event.target)) ||
+        (brandsMobileRef.current && brandsMobileRef.current.contains(event.target))
+
+      if (!isInsideCategories) {
         setShowCategoriesMenu(false)
       }
-      if (brandsRef.current && !brandsRef.current.contains(event.target)) {
+      if (!isInsideBrands) {
         setShowBrandsMenu(false)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
   }, [])
 
   // Handlers para el menú de categorías
@@ -320,7 +334,7 @@ const Navbar = () => {
               </a>
 
               {/* Categorías Móvil */}
-              <div className="border-t border-yellow-600/30">
+              <div className="border-t border-yellow-600/30" ref={categoriesMobileRef}>
                 <button
                   onClick={() => setShowCategoriesMenu(!showCategoriesMenu)}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
@@ -367,7 +381,7 @@ const Navbar = () => {
               </div>
 
               {/* Marcas Móvil */}
-              <div className="border-t border-yellow-600/30">
+              <div className="border-t border-yellow-600/30" ref={brandsMobileRef}>
                 <button
                   onClick={() => setShowBrandsMenu(!showBrandsMenu)}
                   className="w-full text-left px-4 py-3 hover:bg-gray-800 transition-colors flex items-center justify-between"
