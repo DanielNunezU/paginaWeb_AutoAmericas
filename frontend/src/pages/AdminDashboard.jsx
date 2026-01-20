@@ -585,7 +585,7 @@ const AdminDashboard = () => {
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-600 file:text-white file:cursor-pointer"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Puedes seleccionar múltiples imágenes (máx 5MB cada una)
+                  Puedes seleccionar hasta 25 imagenes (max 5MB cada una)
                 </p>
               </div>
 

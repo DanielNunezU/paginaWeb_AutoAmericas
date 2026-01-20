@@ -99,7 +99,7 @@ router.get('/:slug', (req, res) => {
 });
 
 // POST - Crear vehículo (requiere autenticación)
-router.post('/', authMiddleware, upload.array('images', 15), (req, res) => {
+router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
   try {
     const {
       title, brand, model, year, price, mileage,
@@ -186,7 +186,7 @@ router.post('/', authMiddleware, upload.array('images', 15), (req, res) => {
 });
 
 // PUT - Actualizar vehículo (requiere autenticación)
-router.put('/:id', authMiddleware, upload.array('images', 15), (req, res) => {
+router.put('/:id', authMiddleware, upload.array('images', 25), (req, res) => {
   try {
     const { id } = req.params;
     const {
