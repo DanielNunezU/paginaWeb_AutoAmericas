@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
-const BUILD_VERSION = '2.0.1'
+const BUILD_VERSION = '2.0.2'
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth()
   const navigate = useNavigate()
@@ -26,6 +26,10 @@ const Navbar = () => {
   // Cerrar menús desktop al hacer click fuera (solo para desktop)
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Ignorar clicks en menú móvil
+      if (event.target.closest('.mobile-menu-container')) {
+        return
+      }
       // Solo aplicar para menús desktop
       if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
         setShowCategoriesMenu(false)
@@ -119,7 +123,7 @@ const Navbar = () => {
               }}
             />
             <span className="text-xl md:text-2xl font-bold hidden items-center gap-2">
-              🚗 <span>Autos Duitama</span>
+              <span>Autos Duitama</span>
             </span>
           </a>
 
@@ -318,7 +322,7 @@ const Navbar = () => {
 
         {/* Menú Móvil */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-yellow-600/30">
+          <div className="md:hidden border-t border-yellow-600/30 mobile-menu-container">
             <div className="py-2 space-y-1">
               <a
                 href="/"
