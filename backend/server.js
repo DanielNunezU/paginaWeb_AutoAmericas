@@ -281,6 +281,21 @@ app.get('/api/debug/create-admin', (req, res) => {
   });
 });
 
+// Debug: Verificar configuracion de Cloudinary
+app.get('/api/debug/cloudinary', (req, res) => {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+  res.json({
+    cloudinary_configured: !!(cloudName && apiKey && apiSecret),
+    cloud_name_exists: !!cloudName,
+    api_key_exists: !!apiKey,
+    api_secret_exists: !!apiSecret,
+    cloud_name_value: cloudName ? cloudName.substring(0, 3) + '...' : null
+  });
+});
+
 // Servir frontend desde backend/public
 const fs = require('fs');
 const frontendPath = path.join(__dirname, 'public');

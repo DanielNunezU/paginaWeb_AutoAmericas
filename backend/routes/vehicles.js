@@ -99,7 +99,15 @@ router.get('/:slug', (req, res) => {
 });
 
 // POST - Crear vehículo (requiere autenticación)
-router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
+router.post('/', authMiddleware, (req, res, next) => {
+  upload.array('images', 25)(req, res, (err) => {
+    if (err) {
+      console.error('Error al subir imagenes:', err);
+      return res.status(500).json({ message: 'Error al subir imagenes: ' + err.message });
+    }
+    next();
+  });
+}, (req, res) => {
   try {
     const {
       title, brand, model, year, price, mileage,
@@ -113,7 +121,7 @@ router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
     generateSlug(title, (err, slug) => {
       if (err) {
         console.error('Error al generar slug:', err);
-        return res.status(500).json({ message: 'Error del servidor' });
+        return res.status(500).json({ message: 'Error al generar slug: ' + err.message });
       }
 
       const query = `
@@ -130,24 +138,32 @@ router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
 
       db.run(query, params, function(err) {
         if (err) {
-          console.error('Error al crear vehículo:', err);
-          return res.status(500).json({ message: 'Error del servidor' });
+          console.error('Error al insertar vehiculo en DB:', err);
+          return res.status(500).json({ message: 'Error al guardar en base de datos: ' + err.message });
         }
 
         const vehicleId = this.lastID;
 
-        // Guardar imágenes (ahora usando URLs de Cloudinary)
+        // Guardar imagenes (ahora usando URLs de Cloudinary)
         const saveImages = () => {
           if (req.files && req.files.length > 0) {
             let savedCount = 0;
+            let imageError = null;
             req.files.forEach((file, index) => {
               const imageUrl = file.path; // URL completa de Cloudinary
               const isPrimary = index === 0 ? 1 : 0;
               db.run('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)',
                 [vehicleId, imageUrl, isPrimary],
                 function(err) {
+                  if (err && !imageError) {
+                    imageError = err;
+                    console.error('Error al guardar imagen en DB:', err);
+                  }
                   savedCount++;
                   if (savedCount === req.files.length) {
+                    if (imageError) {
+                      return res.status(500).json({ message: 'Error al guardar imagenes: ' + imageError.message });
+                    }
                     returnVehicle();
                   }
                 }
@@ -161,14 +177,14 @@ router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
         const returnVehicle = () => {
           db.get('SELECT * FROM vehicles WHERE id = ?', [vehicleId], (err, vehicle) => {
             if (err) {
-              console.error('Error al obtener vehículo:', err);
-              return res.status(500).json({ message: 'Error del servidor' });
+              console.error('Error al obtener vehiculo creado:', err);
+              return res.status(500).json({ message: 'Error al obtener vehiculo: ' + err.message });
             }
 
             db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [vehicleId], (err, images) => {
               if (err) {
-                console.error('Error al obtener imágenes:', err);
-                return res.status(500).json({ message: 'Error del servidor' });
+                console.error('Error al obtener imagenes:', err);
+                return res.status(500).json({ message: 'Error al obtener imagenes: ' + err.message });
               }
 
               res.status(201).json({ ...vehicle, images });
@@ -186,7 +202,15 @@ router.post('/', authMiddleware, upload.array('images', 25), (req, res) => {
 });
 
 // PUT - Actualizar vehículo (requiere autenticación)
-router.put('/:id', authMiddleware, upload.array('images', 25), (req, res) => {
+router.put('/:id', authMiddleware, (req, res, next) => {
+  upload.array('images', 25)(req, res, (err) => {
+    if (err) {
+      console.error('Error al subir imagenes:', err);
+      return res.status(500).json({ message: 'Error al subir imagenes: ' + err.message });
+    }
+    next();
+  });
+}, (req, res) => {
   try {
     const { id } = req.params;
     const {
