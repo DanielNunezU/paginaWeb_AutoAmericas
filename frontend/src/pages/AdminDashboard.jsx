@@ -29,6 +29,8 @@ const AdminDashboard = () => {
     engine: ''
   })
   const [images, setImages] = useState([])
+  const [imagePreviews, setImagePreviews] = useState([])
+  const [draggedIndex, setDraggedIndex] = useState(null)
   const [brands, setBrands] = useState([])
   const [allBrands, setAllBrands] = useState([])
   const [showBrandManager, setShowBrandManager] = useState(false)
@@ -82,7 +84,51 @@ const AdminDashboard = () => {
   }
 
   const handleImageChange = (e) => {
-    setImages(Array.from(e.target.files))
+    const files = Array.from(e.target.files)
+    setImages(prev => [...prev, ...files])
+
+    // Crear previsualizaciones
+    files.forEach(file => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreviews(prev => [...prev, { file, preview: reader.result }])
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const removeImage = (index) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index))
+    setImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleDragStart = (index) => {
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault()
+    if (draggedIndex === null || draggedIndex === index) return
+
+    // Reordenar previsualizaciones
+    const newPreviews = [...imagePreviews]
+    const draggedItem = newPreviews[draggedIndex]
+    newPreviews.splice(draggedIndex, 1)
+    newPreviews.splice(index, 0, draggedItem)
+    setImagePreviews(newPreviews)
+
+    // Reordenar archivos
+    const newImages = [...images]
+    const draggedFile = newImages[draggedIndex]
+    newImages.splice(draggedIndex, 1)
+    newImages.splice(index, 0, draggedFile)
+    setImages(newImages)
+
+    setDraggedIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
   }
 
   const handleSubmit = async (e) => {
@@ -198,6 +244,7 @@ const AdminDashboard = () => {
       engine: ''
     })
     setImages([])
+    setImagePreviews([])
     setEditingVehicle(null)
     setShowForm(false)
   }
@@ -575,7 +622,7 @@ const AdminDashboard = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Imágenes
+                  Imagenes
                 </label>
                 <input
                   type="file"
@@ -585,8 +632,51 @@ const AdminDashboard = () => {
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-yellow-600 file:text-white file:cursor-pointer"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Puedes seleccionar hasta 25 imagenes (max 5MB cada una)
+                  Puedes seleccionar hasta 25 imagenes (max 5MB cada una). Arrastra para reordenar.
                 </p>
+
+                {imagePreviews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-400 mb-2">
+                      {imagePreviews.length} imagen(es) seleccionada(s) - La primera sera la imagen principal
+                    </p>
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                      {imagePreviews.map((img, index) => (
+                        <div
+                          key={index}
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragOver={(e) => handleDragOver(e, index)}
+                          onDragEnd={handleDragEnd}
+                          className={`relative group cursor-move ${
+                            draggedIndex === index ? 'opacity-50' : ''
+                          } ${index === 0 ? 'ring-2 ring-yellow-500' : ''}`}
+                        >
+                          <img
+                            src={img.preview}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-20 object-cover rounded-lg"
+                          />
+                          {index === 0 && (
+                            <span className="absolute top-1 left-1 bg-yellow-500 text-black text-xs px-1 rounded font-bold">
+                              Principal
+                            </span>
+                          )}
+                          <span className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                            {index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            x
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">
