@@ -102,8 +102,12 @@ router.get('/:slug', (req, res) => {
 router.post('/', authMiddleware, (req, res, next) => {
   upload.array('images', 25)(req, res, (err) => {
     if (err) {
-      console.error('Error al subir imagenes:', err);
-      return res.status(500).json({ message: 'Error al subir imagenes: ' + err.message });
+      console.error('Error completo al subir imagenes:', err);
+      console.error('Tipo de error:', err.name);
+      console.error('Mensaje:', err.message);
+      console.error('Stack:', err.stack);
+      const errorMsg = err.message || err.error?.message || JSON.stringify(err) || 'Error desconocido';
+      return res.status(500).json({ message: 'Error al subir imagenes: ' + errorMsg });
     }
     next();
   });
@@ -205,8 +209,9 @@ router.post('/', authMiddleware, (req, res, next) => {
 router.put('/:id', authMiddleware, (req, res, next) => {
   upload.array('images', 25)(req, res, (err) => {
     if (err) {
-      console.error('Error al subir imagenes:', err);
-      return res.status(500).json({ message: 'Error al subir imagenes: ' + err.message });
+      console.error('Error completo al subir imagenes:', err);
+      const errorMsg = err.message || err.error?.message || JSON.stringify(err) || 'Error desconocido';
+      return res.status(500).json({ message: 'Error al subir imagenes: ' + errorMsg });
     }
     next();
   });
