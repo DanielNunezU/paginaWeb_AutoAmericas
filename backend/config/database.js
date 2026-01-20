@@ -117,10 +117,19 @@ const createTables = async () => {
         status VARCHAR(50) DEFAULT 'available',
         load_capacity VARCHAR(100),
         engine VARCHAR(100),
+        youtube_url VARCHAR(500),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
+
+    // Agregar columna youtube_url si no existe (para bases de datos existentes)
+    try {
+      await connection.execute(`ALTER TABLE vehicles ADD COLUMN youtube_url VARCHAR(500)`);
+      console.log('Columna youtube_url agregada');
+    } catch (err) {
+      // La columna ya existe, ignorar error
+    }
 
     // Tabla de imágenes de vehículos
     await connection.execute(`

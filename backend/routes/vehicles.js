@@ -115,7 +115,7 @@ router.post('/', authMiddleware, (req, res, next) => {
   try {
     const {
       title, brand, model, year, price, mileage,
-      fuel_type, transmission, color, description, features, category, status, load_capacity, engine
+      fuel_type, transmission, color, description, features, category, status, load_capacity, engine, youtube_url
     } = req.body;
 
     if (!title || !brand || !model || !year || !price) {
@@ -129,15 +129,15 @@ router.post('/', authMiddleware, (req, res, next) => {
       }
 
       const query = `
-        INSERT INTO vehicles (slug, title, brand, model, year, price, mileage, fuel_type, transmission, color, description, features, category, status, load_capacity, engine)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO vehicles (slug, title, brand, model, year, price, mileage, fuel_type, transmission, color, description, features, category, status, load_capacity, engine, youtube_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const params = [
         slug, title, brand, model, year, price,
         mileage || null, fuel_type || null, transmission || null,
         color || null, description || null, features || null,
-        category || 'carro', status || 'available', load_capacity || null, engine || null
+        category || 'carro', status || 'available', load_capacity || null, engine || null, youtube_url || null
       ];
 
       db.run(query, params, function(err) {
@@ -220,7 +220,7 @@ router.put('/:id', authMiddleware, (req, res, next) => {
     const { id } = req.params;
     const {
       title, brand, model, year, price, mileage,
-      fuel_type, transmission, color, description, features, category, status, load_capacity, engine
+      fuel_type, transmission, color, description, features, category, status, load_capacity, engine, youtube_url
     } = req.body;
 
     db.get('SELECT * FROM vehicles WHERE id = ?', [id], (err, vehicle) => {
@@ -238,7 +238,7 @@ router.put('/:id', authMiddleware, (req, res, next) => {
           UPDATE vehicles
           SET slug = ?, title = ?, brand = ?, model = ?, year = ?, price = ?,
               mileage = ?, fuel_type = ?, transmission = ?, color = ?,
-              description = ?, features = ?, category = ?, status = ?, load_capacity = ?, engine = ?, updated_at = CURRENT_TIMESTAMP
+              description = ?, features = ?, category = ?, status = ?, load_capacity = ?, engine = ?, youtube_url = ?, updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `;
 
@@ -259,6 +259,7 @@ router.put('/:id', authMiddleware, (req, res, next) => {
           status || vehicle.status,
           load_capacity || vehicle.load_capacity,
           engine || vehicle.engine,
+          youtube_url !== undefined ? youtube_url : vehicle.youtube_url,
           id
         ];
 

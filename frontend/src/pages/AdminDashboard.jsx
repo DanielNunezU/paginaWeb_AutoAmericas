@@ -26,7 +26,8 @@ const AdminDashboard = () => {
     category: 'carro',
     status: 'available',
     load_capacity: '',
-    engine: ''
+    engine: '',
+    youtube_url: ''
   })
   const [images, setImages] = useState([])
   const [imagePreviews, setImagePreviews] = useState([])
@@ -225,7 +226,8 @@ const AdminDashboard = () => {
       category: vehicle.category || 'carro',
       status: vehicle.status,
       load_capacity: vehicle.load_capacity || '',
-      engine: vehicle.engine || ''
+      engine: vehicle.engine || '',
+      youtube_url: vehicle.youtube_url || ''
     })
 
     // Cargar imagenes existentes del vehiculo
@@ -277,7 +279,8 @@ const AdminDashboard = () => {
       category: 'carro',
       status: 'available',
       load_capacity: '',
-      engine: ''
+      engine: '',
+      youtube_url: ''
     })
     setImages([])
     setImagePreviews([])
@@ -645,7 +648,7 @@ const AdminDashboard = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Características
+                  Caracteristicas
                 </label>
                 <textarea
                   name="features"
@@ -653,7 +656,21 @@ const AdminDashboard = () => {
                   onChange={handleInputChange}
                   rows="4"
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
-                  placeholder="Lista las características principales..."
+                  placeholder="Lista las caracteristicas principales..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Video de YouTube (opcional)
+                </label>
+                <input
+                  type="url"
+                  name="youtube_url"
+                  value={formData.youtube_url}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                  placeholder="https://www.youtube.com/watch?v=..."
                 />
               </div>
 
