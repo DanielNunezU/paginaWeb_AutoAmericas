@@ -2,43 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const authMiddleware = require('../middleware/auth');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
-
-// Crear directorio de uploads si no existe
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configuración de multer para subir imágenes
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (extname && mimetype) {
-      cb(null, true);
-    } else {
-      cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, webp)'));
-    }
-  }
-});
+const { upload, deleteImage } = require('../config/cloudinary');
 
 // Función para generar slug único
 const generateSlug = (title, callback) => {
@@ -172,12 +136,12 @@ router.post('/', authMiddleware, upload.array('images', 15), (req, res) => {
 
         const vehicleId = this.lastID;
 
-        // Guardar imágenes
+        // Guardar imágenes (ahora usando URLs de Cloudinary)
         const saveImages = () => {
           if (req.files && req.files.length > 0) {
             let savedCount = 0;
             req.files.forEach((file, index) => {
-              const imageUrl = `/uploads/${file.filename}`;
+              const imageUrl = file.path; // URL completa de Cloudinary
               const isPrimary = index === 0 ? 1 : 0;
               db.run('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)',
                 [vehicleId, imageUrl, isPrimary],
@@ -275,12 +239,12 @@ router.put('/:id', authMiddleware, upload.array('images', 15), (req, res) => {
             return res.status(500).json({ message: 'Error del servidor' });
           }
 
-          // Agregar nuevas imágenes si se proporcionan
+          // Agregar nuevas imágenes si se proporcionan (usando URLs de Cloudinary)
           const saveImagesAndReturn = () => {
             if (req.files && req.files.length > 0) {
               let savedCount = 0;
               req.files.forEach((file) => {
-                const imageUrl = `/uploads/${file.filename}`;
+                const imageUrl = file.path; // URL completa de Cloudinary
                 db.run('INSERT INTO vehicle_images (vehicle_id, image_url, is_primary) VALUES (?, ?, ?)',
                   [id, imageUrl, 0],
                   function(err) {
@@ -351,19 +315,22 @@ router.delete('/:id', authMiddleware, (req, res) => {
         return res.status(404).json({ message: 'Vehículo no encontrado' });
       }
 
-      db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [id], (err, images) => {
+      db.all('SELECT * FROM vehicle_images WHERE vehicle_id = ?', [id], async (err, images) => {
         if (err) {
           console.error('Error al obtener imágenes:', err);
           return res.status(500).json({ message: 'Error del servidor' });
         }
 
-        // Eliminar imágenes del servidor
-        images.forEach(img => {
-          const imagePath = path.join(__dirname, '..', img.image_url);
-          if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
+        // Eliminar imágenes de Cloudinary
+        for (const img of images) {
+          try {
+            if (img.image_url && img.image_url.includes('cloudinary')) {
+              await deleteImage(img.image_url);
+            }
+          } catch (cloudinaryErr) {
+            console.error('Error al eliminar imagen de Cloudinary:', cloudinaryErr);
           }
-        });
+        }
 
         // Eliminar de la base de datos
         db.run('DELETE FROM vehicle_images WHERE vehicle_id = ?', [id], (err) => {
@@ -394,7 +361,7 @@ router.delete('/images/:imageId', authMiddleware, (req, res) => {
   try {
     const { imageId } = req.params;
 
-    db.get('SELECT * FROM vehicle_images WHERE id = ?', [imageId], (err, image) => {
+    db.get('SELECT * FROM vehicle_images WHERE id = ?', [imageId], async (err, image) => {
       if (err) {
         console.error('Error al obtener imagen:', err);
         return res.status(500).json({ message: 'Error del servidor' });
@@ -404,9 +371,13 @@ router.delete('/images/:imageId', authMiddleware, (req, res) => {
         return res.status(404).json({ message: 'Imagen no encontrada' });
       }
 
-      const imagePath = path.join(__dirname, '..', image.image_url);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      // Eliminar de Cloudinary si es una URL de Cloudinary
+      try {
+        if (image.image_url && image.image_url.includes('cloudinary')) {
+          await deleteImage(image.image_url);
+        }
+      } catch (cloudinaryErr) {
+        console.error('Error al eliminar imagen de Cloudinary:', cloudinaryErr);
       }
 
       db.run('DELETE FROM vehicle_images WHERE id = ?', [imageId], (err) => {
