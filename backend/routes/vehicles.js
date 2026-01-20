@@ -424,4 +424,44 @@ router.delete('/images/:imageId', authMiddleware, (req, res) => {
   }
 });
 
+// PUT - Cambiar imagen principal (requiere autenticacion)
+router.put('/images/:imageId/primary', authMiddleware, (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    // Obtener la imagen para saber a que vehiculo pertenece
+    db.get('SELECT * FROM vehicle_images WHERE id = ?', [imageId], (err, image) => {
+      if (err) {
+        console.error('Error al obtener imagen:', err);
+        return res.status(500).json({ message: 'Error del servidor' });
+      }
+
+      if (!image) {
+        return res.status(404).json({ message: 'Imagen no encontrada' });
+      }
+
+      // Quitar is_primary de todas las imagenes del vehiculo
+      db.run('UPDATE vehicle_images SET is_primary = 0 WHERE vehicle_id = ?', [image.vehicle_id], (err) => {
+        if (err) {
+          console.error('Error al actualizar imagenes:', err);
+          return res.status(500).json({ message: 'Error del servidor' });
+        }
+
+        // Establecer la nueva imagen principal
+        db.run('UPDATE vehicle_images SET is_primary = 1 WHERE id = ?', [imageId], (err) => {
+          if (err) {
+            console.error('Error al establecer imagen principal:', err);
+            return res.status(500).json({ message: 'Error del servidor' });
+          }
+
+          res.json({ message: 'Imagen principal actualizada' });
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error al cambiar imagen principal:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+});
+
 module.exports = router;

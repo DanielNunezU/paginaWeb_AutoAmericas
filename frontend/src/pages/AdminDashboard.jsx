@@ -30,6 +30,7 @@ const AdminDashboard = () => {
   })
   const [images, setImages] = useState([])
   const [imagePreviews, setImagePreviews] = useState([])
+  const [existingImages, setExistingImages] = useState([])
   const [draggedIndex, setDraggedIndex] = useState(null)
   const [brands, setBrands] = useState([])
   const [allBrands, setAllBrands] = useState([])
@@ -131,6 +132,30 @@ const AdminDashboard = () => {
     setDraggedIndex(null)
   }
 
+  const removeExistingImage = async (imageId) => {
+    if (!confirm('¿Eliminar esta imagen?')) return
+    try {
+      await axios.delete(`/api/vehicles/images/${imageId}`)
+      setExistingImages(prev => prev.filter(img => img.id !== imageId))
+    } catch (error) {
+      console.error('Error al eliminar imagen:', error)
+      alert('Error al eliminar imagen')
+    }
+  }
+
+  const setAsPrimaryImage = async (imageId) => {
+    try {
+      await axios.put(`/api/vehicles/images/${imageId}/primary`)
+      setExistingImages(prev => prev.map(img => ({
+        ...img,
+        is_primary: img.id === imageId ? 1 : 0
+      })).sort((a, b) => b.is_primary - a.is_primary))
+    } catch (error) {
+      console.error('Error al cambiar imagen principal:', error)
+      alert('Error al cambiar imagen principal')
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -183,7 +208,7 @@ const AdminDashboard = () => {
     }
   }
 
-  const handleEdit = (vehicle) => {
+  const handleEdit = async (vehicle) => {
     setEditingVehicle(vehicle)
     setFormData({
       title: vehicle.title,
@@ -202,6 +227,17 @@ const AdminDashboard = () => {
       load_capacity: vehicle.load_capacity || '',
       engine: vehicle.engine || ''
     })
+
+    // Cargar imagenes existentes del vehiculo
+    try {
+      const response = await axios.get(`/api/vehicles/${vehicle.slug}`)
+      if (response.data.images && response.data.images.length > 0) {
+        setExistingImages(response.data.images.sort((a, b) => b.is_primary - a.is_primary))
+      }
+    } catch (error) {
+      console.error('Error al cargar imagenes:', error)
+    }
+
     setShowForm(true)
   }
 
@@ -245,6 +281,7 @@ const AdminDashboard = () => {
     })
     setImages([])
     setImagePreviews([])
+    setExistingImages([])
     setEditingVehicle(null)
     setShowForm(false)
   }
@@ -635,10 +672,48 @@ const AdminDashboard = () => {
                   Puedes seleccionar hasta 25 imagenes (max 5MB cada una). Arrastra para reordenar.
                 </p>
 
+                {existingImages.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-400 mb-2">
+                      Imagenes actuales ({existingImages.length}) - Clic en una imagen para hacerla principal
+                    </p>
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                      {existingImages.map((img, index) => (
+                        <div
+                          key={img.id}
+                          className={`relative group cursor-pointer ${img.is_primary ? 'ring-2 ring-yellow-500' : ''}`}
+                          onClick={() => !img.is_primary && setAsPrimaryImage(img.id)}
+                        >
+                          <img
+                            src={img.image_url}
+                            alt={`Imagen ${index + 1}`}
+                            className="w-full h-20 object-cover rounded-lg"
+                          />
+                          {img.is_primary ? (
+                            <span className="absolute top-1 left-1 bg-yellow-500 text-black text-xs px-1 rounded font-bold">
+                              Principal
+                            </span>
+                          ) : null}
+                          <span className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                            {index + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); removeExistingImage(img.id); }}
+                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            x
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {imagePreviews.length > 0 && (
                   <div className="mt-4">
                     <p className="text-sm text-gray-400 mb-2">
-                      {imagePreviews.length} imagen(es) seleccionada(s) - La primera sera la imagen principal
+                      {imagePreviews.length} imagen(es) nueva(s) - Arrastra para reordenar
                     </p>
                     <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                       {imagePreviews.map((img, index) => (
@@ -650,20 +725,20 @@ const AdminDashboard = () => {
                           onDragEnd={handleDragEnd}
                           className={`relative group cursor-move ${
                             draggedIndex === index ? 'opacity-50' : ''
-                          } ${index === 0 ? 'ring-2 ring-yellow-500' : ''}`}
+                          } ${index === 0 && existingImages.length === 0 ? 'ring-2 ring-yellow-500' : ''}`}
                         >
                           <img
                             src={img.preview}
                             alt={`Preview ${index + 1}`}
                             className="w-full h-20 object-cover rounded-lg"
                           />
-                          {index === 0 && (
+                          {index === 0 && existingImages.length === 0 && (
                             <span className="absolute top-1 left-1 bg-yellow-500 text-black text-xs px-1 rounded font-bold">
                               Principal
                             </span>
                           )}
                           <span className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
-                            {index + 1}
+                            +{index + 1}
                           </span>
                           <button
                             type="button"
