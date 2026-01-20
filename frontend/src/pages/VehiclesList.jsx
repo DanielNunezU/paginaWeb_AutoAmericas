@@ -152,7 +152,11 @@ const VehiclesList = () => {
 
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🚗</div>
+            <div className="mb-4">
+              <svg className="w-16 h-16 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7M5 15h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2z" />
+              </svg>
+            </div>
             <p className="text-xl text-gray-300">
               {hasFilter
                 ? `No hay vehículos disponibles con los filtros seleccionados`
@@ -182,7 +186,10 @@ const VehiclesList = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500">
-                      <span className="text-6xl">🚗</span>
+                      <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                      </svg>
                     </div>
                   )}
                 </div>
