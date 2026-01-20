@@ -28,7 +28,7 @@ const Contact = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-sm w-20">Asesor 1:</span>
-                      <a href="tel:+573133490087" className="text-yellow-500 hover:underline">313 349 0087</a>
+                      <a href="tel:+573112371347" className="text-yellow-500 hover:underline">311 237 1347</a>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-sm w-20">Asesor 2:</span>
@@ -52,7 +52,7 @@ const Contact = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-sm w-20">Asesor 7:</span>
-                      <a href="tel:+573112371347" className="text-yellow-500 hover:underline">311 237 1347</a>
+                      <a href="tel:+573133490087" className="text-yellow-500 hover:underline">313 349 0087</a>
                     </div>
                   </div>
                 </div>
@@ -71,12 +71,12 @@ const Contact = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-sm w-20">Asesor 1:</span>
                       <a
-                        href="https://api.whatsapp.com/send?phone=573133490087&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-green-500 hover:underline"
                       >
-                        313 349 0087
+                        311 237 1347
                       </a>
                     </div>
                     <div className="flex items-center gap-2">
@@ -137,12 +137,12 @@ const Contact = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-sm w-20">Asesor 7:</span>
                       <a
-                        href="https://api.whatsapp.com/send?phone=573112371347&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
+                        href="https://api.whatsapp.com/send?phone=573133490087&text=Hola%2C%20estoy%20interesado%20en%20un%20veh%C3%ADculo..."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-green-500 hover:underline"
                       >
-                        311 237 1347
+                        313 349 0087
                       </a>
                     </div>
                   </div>

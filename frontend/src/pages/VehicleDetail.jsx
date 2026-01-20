@@ -42,13 +42,13 @@ const VehicleDetail = () => {
 
   // Lista de asesores para sorteo aleatorio
   const asesores = [
-    '573133490087',
+    '573112371347',
     '573209669384',
     '573106440913',
     '573144018594',
     '573133473617',
     '573203866321',
-    '573112371347'
+    '573133490087'
   ]
 
   // Función para obtener un asesor aleatorio y abrir WhatsApp
