@@ -195,7 +195,7 @@ const VehicleDetail = () => {
                 </div>
 
                 <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
-                  <div className="text-gray-400 text-sm mb-1">Modelo</div>
+                  <div className="text-gray-400 text-sm mb-1">Línea</div>
                   <div className="font-semibold text-lg text-gray-100">{vehicle.model}</div>
                 </div>
 
