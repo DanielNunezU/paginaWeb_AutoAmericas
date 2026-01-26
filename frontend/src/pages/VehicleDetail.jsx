@@ -41,23 +41,17 @@ const VehicleDetail = () => {
   }
 
   // Lista de asesores para sorteo aleatorio
-  // Los números prioritarios (3112371347 y 3106440913) aparecen más veces para mayor probabilidad
+  // Los números prioritarios tienen 40% cada uno (80% total entre los dos)
   const asesores = [
-    '573112371347',  // Prioritario
-    '573112371347',  // Prioritario
-    '573112371347',  // Prioritario
-    '573112371347',  // Prioritario
-    '573112371347',  // Prioritario
-    '573106440913',  // Prioritario
-    '573106440913',  // Prioritario
-    '573106440913',  // Prioritario
-    '573106440913',  // Prioritario
-    '573106440913',  // Prioritario
-    '573209669384',
-    '573144018594',
-    '573133473617',
-    '573203866321',
-    '573133490087'
+    '573112371347', '573112371347', '573112371347', '573112371347', '573112371347',
+    '573112371347', '573112371347', '573112371347', '573112371347', '573112371347',  // 40%
+    '573106440913', '573106440913', '573106440913', '573106440913', '573106440913',
+    '573106440913', '573106440913', '573106440913', '573106440913', '573106440913',  // 40%
+    '573209669384',  // 4%
+    '573144018594',  // 4%
+    '573133473617',  // 4%
+    '573203866321',  // 4%
+    '573133490087'   // 4%
   ]
 
   // Función para obtener un asesor aleatorio y abrir WhatsApp
