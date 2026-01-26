@@ -44,11 +44,15 @@ const VehicleDetail = () => {
   // Los números prioritarios (3112371347 y 3106440913) aparecen más veces para mayor probabilidad
   const asesores = [
     '573112371347',  // Prioritario
-    '573112371347',  // Prioritario (repetido)
-    '573112371347',  // Prioritario (repetido)
+    '573112371347',  // Prioritario
+    '573112371347',  // Prioritario
+    '573112371347',  // Prioritario
+    '573112371347',  // Prioritario
     '573106440913',  // Prioritario
-    '573106440913',  // Prioritario (repetido)
-    '573106440913',  // Prioritario (repetido)
+    '573106440913',  // Prioritario
+    '573106440913',  // Prioritario
+    '573106440913',  // Prioritario
+    '573106440913',  // Prioritario
     '573209669384',
     '573144018594',
     '573133473617',
