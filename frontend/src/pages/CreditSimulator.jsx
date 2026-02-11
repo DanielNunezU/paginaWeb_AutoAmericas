@@ -231,11 +231,11 @@ const CreditSimulator = () => {
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all"
                     >
-                      <option value="1.25">1.25% mensual - Excelente crédito</option>
-                      <option value="1.5">1.5% mensual - Buen crédito</option>
-                      <option value="1.75">1.75% mensual - Crédito promedio</option>
-                      <option value="2">2% mensual - Crédito alto</option>
-                      <option value="2.25">2.25% mensual - Crédito muy alto</option>
+                      <option value="1.25">1.25%</option>
+                      <option value="1.5">1.5%</option>
+                      <option value="1.75">1.75%</option>
+                      <option value="2">2%</option>
+                      <option value="2.25">2.25%</option>
                     </select>
                   )}
 
@@ -372,7 +372,7 @@ const CreditSimulator = () => {
                         </div>
                         <div className="text-right">
                           <span className="text-lg font-bold text-yellow-500">
-                            {result.monthlyRate}% mensual
+                            {result.monthlyRate}%
                           </span>
                           <p className="text-sm text-yellow-600">
                             ({result.annualRate.toFixed(2)}% EA)
